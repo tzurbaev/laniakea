@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Laniakea;
 
 use Illuminate\Support\ServiceProvider;
+use Laniakea\Forms\FormIdsGenerator;
+use Laniakea\Forms\FormsManager;
+use Laniakea\Forms\Interfaces\FormIdsGeneratorInterface;
+use Laniakea\Forms\Interfaces\FormsManagerInterface;
 use Laniakea\Resources\Interfaces\ResourceManagerInterface;
 use Laniakea\Resources\Interfaces\ResourceRegistrarInterface;
 use Laniakea\Resources\ResourceManager;
@@ -29,14 +33,16 @@ class LaniakeaServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/laniakea.php', 'laniakea');
 
-        $this->bindResourceManagerCommands();
-        $this->bindResourceManager();
+        $this->registerResourceManagerCommands();
+        $this->registerResourceManager();
 
         $container = $this->getFreshVersionedContainer();
         $this->app->instance(VersionedContainer::class, $container);
+
+        $this->registerForms();
     }
 
-    protected function bindResourceManagerCommands(): void
+    protected function registerResourceManagerCommands(): void
     {
         $this->app->bind(ResourceManagerCommands::class, fn () => new ResourceManagerCommands(
             pagination: config('laniakea.resources.commands.pagination', []),
@@ -45,7 +51,7 @@ class LaniakeaServiceProvider extends ServiceProvider
         ));
     }
 
-    protected function bindResourceManager(): void
+    protected function registerResourceManager(): void
     {
         $this->app->bind(ResourceManagerInterface::class, ResourceManager::class);
     }
@@ -70,5 +76,11 @@ class LaniakeaServiceProvider extends ServiceProvider
                 $registrar->bindVersions($versionBinder);
             }
         });
+    }
+
+    protected function registerForms(): void
+    {
+        $this->app->bind(FormIdsGeneratorInterface::class, FormIdsGenerator::class);
+        $this->app->bind(FormsManagerInterface::class, FormsManager::class);
     }
 }
