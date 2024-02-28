@@ -1,8 +1,8 @@
 # Laniakea
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/tzurbaev/laniakea.svg?style=flat-square)](https://packagist.org/packages/tzurbaev/laniakea)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/laniakea/laniakea.svg?style=flat-square)](https://packagist.org/packages/laniakea/laniakea)
 [![Tests](https://img.shields.io/github/actions/workflow/status/tzurbaev/laniakea/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/tzurbaev/laniakea/actions/workflows/run-tests.yml)
-[![Total Downloads](https://img.shields.io/packagist/dt/tzurbaev/laniakea.svg?style=flat-square)](https://packagist.org/packages/tzurbaev/laniakea)
+[![Total Downloads](https://img.shields.io/packagist/dt/laniakea/laniakea.svg?style=flat-square)](https://packagist.org/packages/laniakea/laniakea)
 
 WIP.
 
