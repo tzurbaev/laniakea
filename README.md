@@ -11,7 +11,7 @@ WIP.
 You can install the package via composer:
 
 ```bash
-composer require tzurbaev/laniakea
+composer require laniakea/laniakea
 ```
 
 ## Testing
