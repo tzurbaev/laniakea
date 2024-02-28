@@ -1,8 +1,14 @@
 <?php
 
+use Laniakea\Forms\FormIdsGenerator;
+use Laniakea\Forms\FormsManager;
+use Laniakea\Forms\Interfaces\FormIdsGeneratorInterface;
+use Laniakea\Forms\Interfaces\FormsManagerInterface;
 use Laniakea\Resources\Commands\FilterResources;
 use Laniakea\Resources\Commands\LoadInclusions;
 use Laniakea\Resources\Commands\SortResources;
+use Laniakea\Resources\Interfaces\ResourceManagerInterface;
+use Laniakea\Resources\ResourceManager;
 
 return [
     'registrars' => [
@@ -34,5 +40,11 @@ return [
                 LoadInclusions::class,
             ],
         ],
+    ],
+
+    'bindings' => [
+        ResourceManagerInterface::class => ResourceManager::class,
+        FormIdsGeneratorInterface::class => FormIdsGenerator::class,
+        FormsManagerInterface::class => FormsManager::class,
     ],
 ];

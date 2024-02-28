@@ -53,7 +53,10 @@ class LaniakeaServiceProvider extends ServiceProvider
 
     protected function registerResourceManager(): void
     {
-        $this->app->bind(ResourceManagerInterface::class, ResourceManager::class);
+        $this->app->bind(
+            ResourceManagerInterface::class,
+            config()->get('laniakea.bindings.'.ResourceManagerInterface::class, ResourceManager::class)
+        );
     }
 
     protected function getFreshVersionedContainer(): VersionedContainer
@@ -80,7 +83,14 @@ class LaniakeaServiceProvider extends ServiceProvider
 
     protected function registerForms(): void
     {
-        $this->app->bind(FormIdsGeneratorInterface::class, FormIdsGenerator::class);
-        $this->app->bind(FormsManagerInterface::class, FormsManager::class);
+        $this->app->bind(
+            FormIdsGeneratorInterface::class,
+            config()->get('laniakea.bindings.'.FormIdsGeneratorInterface::class, FormIdsGenerator::class)
+        );
+
+        $this->app->bind(
+            FormsManagerInterface::class,
+            config()->get('laniakea.bindings.'.FormsManagerInterface::class, FormsManager::class)
+        );
     }
 }
