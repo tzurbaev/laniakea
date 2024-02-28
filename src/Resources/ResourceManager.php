@@ -28,6 +28,7 @@ readonly class ResourceManager implements ResourceManagerInterface
         ResourceRequestInterface $request,
         ResourceInterface $resource,
         RepositoryInterface $repository,
+        ?callable $callback = null,
         array $context = [],
     ): LengthAwarePaginator {
         return $repository->paginate(
@@ -35,7 +36,8 @@ readonly class ResourceManager implements ResourceManagerInterface
             $request->getCount(),
             $this->getRepositoryCallback(
                 new ResourceContext($request, $resource, $repository, $context),
-                $this->commands->getPaginationCommands()
+                $this->commands->getPaginationCommands(),
+                $callback,
             ),
         );
     }
@@ -44,12 +46,14 @@ readonly class ResourceManager implements ResourceManagerInterface
         ResourceRequestInterface $request,
         ResourceInterface $resource,
         RepositoryInterface $repository,
+        ?callable $callback = null,
         array $context = [],
     ): Collection {
         return $repository->list(
             $this->getRepositoryCallback(
                 new ResourceContext($request, $resource, $repository, $context),
-                $this->commands->getListCommands()
+                $this->commands->getListCommands(),
+                $callback,
             ),
         );
     }

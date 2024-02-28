@@ -18,6 +18,7 @@ interface ResourceManagerInterface
      * @param ResourceRequestInterface $request
      * @param ResourceInterface        $resource
      * @param RepositoryInterface      $repository
+     * @param callable|null            $callback
      * @param array                    $context
      *
      * @return LengthAwarePaginator
@@ -26,6 +27,7 @@ interface ResourceManagerInterface
         ResourceRequestInterface $request,
         ResourceInterface $resource,
         RepositoryInterface $repository,
+        ?callable $callback = null,
         array $context = [],
     ): LengthAwarePaginator;
 
@@ -35,6 +37,7 @@ interface ResourceManagerInterface
      * @param ResourceRequestInterface $request
      * @param ResourceInterface        $resource
      * @param RepositoryInterface      $repository
+     * @param callable|null            $callback
      * @param array                    $context
      *
      * @return Collection
@@ -43,6 +46,7 @@ interface ResourceManagerInterface
         ResourceRequestInterface $request,
         ResourceInterface $resource,
         RepositoryInterface $repository,
+        ?callable $callback = null,
         array $context = [],
     ): Collection;
 
