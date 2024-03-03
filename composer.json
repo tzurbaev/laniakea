@@ -15,11 +15,18 @@
         }
     ],
     "require": {
-        "php": "^8.2"
+        "php": "^8.2",
+        "illuminate/http": "^10.0|^11.0",
+        "illuminate/validation": "^10.0|^11.0",
+        "illuminate/support": "^10.0|^11.0",
+        "illuminate/contracts": "^10.0|^11.0",
+        "illuminate/container": "^10.0|^11.0",
+        "illuminate/config": "^10.0|^11.0",
+        "illuminate/database": "^10.0|^11.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.21.1",
-        "orchestra/testbench": "9.x-dev",
+        "orchestra/testbench": "^8.21.1",
         "pestphp/pest": "^2.15"
     },
     "autoload": {

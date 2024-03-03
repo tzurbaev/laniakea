@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Laniakea\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -12,31 +11,36 @@ use Illuminate\Validation\ValidationException as BaseValidationException;
 
 readonly class ExceptionRenderer
 {
-    public function registerAll(Handler $handler): void
+    /**
+     * Render BaseHttpException or RenderableExceptionInterface.
+     *
+     * @param BaseHttpException $e
+     * @param Request           $request
+     *
+     * @return JsonResponse|Response|void
+     */
+    public function render(BaseHttpException $e, Request $request)
     {
-        $this->registerBaseHttpException($handler);
-        $this->registerValidationException($handler);
-    }
-
-    public function registerBaseHttpException(Handler $handler): void
-    {
-        $handler->renderable(fn (BaseHttpException $e, Request $request) => $this->render($e, $request));
-    }
-
-    public function registerValidationException(Handler $handler): void
-    {
-        $handler->renderable(
-            fn (BaseValidationException $e, Request $request) => $this->render(new ValidationException($e), $request)
-        );
-    }
-
-    public function render(BaseHttpException $e, Request $request): Response|JsonResponse
-    {
-        if (($e instanceof RenderableExceptionInterface) && !$request->wantsJson()) {
+        if ($request->wantsJson()) {
+            return $this->getJsonResponse($e, $request);
+        } elseif ($e instanceof RenderableExceptionInterface) {
             return $this->getResponse($e, $request);
         }
+    }
 
-        return $this->getJsonResponse($e, $request);
+    /**
+     * Render validation exception as BaseHttpException (JSON only).
+     *
+     * @param BaseValidationException $e
+     * @param Request                 $request
+     *
+     * @return JsonResponse|Response|void|null
+     */
+    public function renderValidationException(BaseValidationException $e, Request $request)
+    {
+        if ($request->wantsJson()) {
+            return $this->render(new ValidationException($e), $request);
+        }
     }
 
     protected function getResponse(BaseHttpException & RenderableExceptionInterface $e, Request $request): Response

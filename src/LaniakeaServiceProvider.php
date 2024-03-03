@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laniakea;
 
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\ServiceProvider;
 use Laniakea\Forms\FormIdsGenerator;
 use Laniakea\Forms\FormsManager;
@@ -44,19 +45,24 @@ class LaniakeaServiceProvider extends ServiceProvider
 
     protected function registerResourceManagerCommands(): void
     {
-        $this->app->bind(ResourceManagerCommands::class, fn () => new ResourceManagerCommands(
-            pagination: config('laniakea.resources.commands.pagination', []),
-            list: config('laniakea.resources.commands.list', []),
-            item: config('laniakea.resources.commands.item', []),
-        ));
+        $this->app->bind(ResourceManagerCommands::class, function () {
+            $config = $this->getConfig();
+
+            return new ResourceManagerCommands(
+                pagination: $config->get('laniakea.resources.commands.pagination', []),
+                list: $config->get('laniakea.resources.commands.list', []),
+                item: $config->get('laniakea.resources.commands.item', []),
+            );
+        });
     }
 
     protected function registerResourceManager(): void
     {
-        $this->app->bind(
-            ResourceManagerInterface::class,
-            config()->get('laniakea.bindings.'.ResourceManagerInterface::class, ResourceManager::class)
-        );
+        $this->app->bind(ResourceManagerInterface::class, function () {
+            return $this->app->make(
+                $this->getConfig()->get('laniakea.bindings.'.ResourceManagerInterface::class, ResourceManager::class)
+            );
+        });
     }
 
     protected function getFreshVersionedContainer(): VersionedContainer
@@ -83,14 +89,21 @@ class LaniakeaServiceProvider extends ServiceProvider
 
     protected function registerForms(): void
     {
-        $this->app->bind(
-            FormIdsGeneratorInterface::class,
-            config()->get('laniakea.bindings.'.FormIdsGeneratorInterface::class, FormIdsGenerator::class)
-        );
+        $this->app->bind(FormIdsGeneratorInterface::class, function () {
+            return $this->app->make(
+                $this->getConfig()->get('laniakea.bindings.'.FormIdsGeneratorInterface::class, FormIdsGenerator::class),
+            );
+        });
 
-        $this->app->bind(
-            FormsManagerInterface::class,
-            config()->get('laniakea.bindings.'.FormsManagerInterface::class, FormsManager::class)
-        );
+        $this->app->bind(FormsManagerInterface::class, function () {
+            return $this->app->make(
+                $this->getConfig()->get('laniakea.bindings.'.FormsManagerInterface::class, FormsManager::class),
+            );
+        });
+    }
+
+    protected function getConfig(): Repository
+    {
+        return $this->app->make('config');
     }
 }
