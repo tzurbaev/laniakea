@@ -15,6 +15,12 @@ use Laniakea\Resources\Interfaces\ResourceRegistrarInterface;
 use Laniakea\Resources\ResourceManager;
 use Laniakea\Resources\ResourceManagerCommands;
 use Laniakea\Resources\ResourceRouteBinder;
+use Laniakea\Settings\Interfaces\SettingsGeneratorInterface;
+use Laniakea\Settings\Interfaces\SettingsUpdaterInterface;
+use Laniakea\Settings\Interfaces\SettingsValuesInterface;
+use Laniakea\Settings\SettingsGenerator;
+use Laniakea\Settings\SettingsUpdater;
+use Laniakea\Settings\SettingsValues;
 use Laniakea\Versions\Interfaces\VersionedResourceRegistrarInterface;
 use Laniakea\Versions\VersionBinder;
 use Laniakea\Versions\VersionedContainer;
@@ -41,6 +47,8 @@ class LaniakeaServiceProvider extends ServiceProvider
         $this->app->instance(VersionedContainer::class, $container);
 
         $this->registerForms();
+
+        $this->registerSettings();
     }
 
     protected function registerResourceManagerCommands(): void
@@ -89,21 +97,35 @@ class LaniakeaServiceProvider extends ServiceProvider
 
     protected function registerForms(): void
     {
-        $this->app->bind(FormIdsGeneratorInterface::class, function () {
-            return $this->app->make(
-                $this->getConfig()->get('laniakea.bindings.'.FormIdsGeneratorInterface::class, FormIdsGenerator::class),
-            );
-        });
+        $this->bindPackageAbstractions([
+            FormIdsGeneratorInterface::class => FormIdsGenerator::class,
+            FormsManagerInterface::class => FormsManager::class,
+        ]);
+    }
 
-        $this->app->bind(FormsManagerInterface::class, function () {
-            return $this->app->make(
-                $this->getConfig()->get('laniakea.bindings.'.FormsManagerInterface::class, FormsManager::class),
-            );
-        });
+    protected function registerSettings(): void
+    {
+        $this->bindPackageAbstractions([
+            SettingsGeneratorInterface::class => SettingsGenerator::class,
+            SettingsUpdaterInterface::class => SettingsUpdater::class,
+            SettingsValuesInterface::class => SettingsValues::class,
+        ]);
     }
 
     protected function getConfig(): Repository
     {
         return $this->app->make('config');
+    }
+
+    protected function bindPackageAbstractions(array $bindings): void
+    {
+
+        foreach ($bindings as $abstract => $concrete) {
+            $this->app->bind($abstract, function () use ($abstract, $concrete) {
+                return $this->app->make(
+                    $this->getConfig()->get('laniakea.bindings.'.$abstract, $concrete),
+                );
+            });
+        }
     }
 }

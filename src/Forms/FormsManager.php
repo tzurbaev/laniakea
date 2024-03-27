@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Laniakea\Forms;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\MessageBag;
 use Laniakea\Forms\Interfaces\FormButtonInterface;
 use Laniakea\Forms\Interfaces\FormFieldInterface;
 use Laniakea\Forms\Interfaces\FormIdsGeneratorInterface;
@@ -31,6 +32,7 @@ readonly class FormsManager implements FormsManagerInterface
     {
         return [
             'id' => $form->getId() ?? $this->idsGenerator->getFormId(),
+            'layout' => $form->getLayout(),
             'method' => $form->getMethod(),
             'url' => $form->getUrl(),
             'redirect_url' => $form->getRedirectUrl(),
@@ -38,6 +40,7 @@ readonly class FormsManager implements FormsManagerInterface
             'buttons' => $this->getFormButtons($form->getButtons()),
             'settings' => $form->getSettings(),
             'values' => $form->getValues(),
+            'errors' => $this->getFormErrors($form->getErrors()),
         ];
     }
 
@@ -99,5 +102,14 @@ readonly class FormsManager implements FormsManagerInterface
             ])
             ->values()
             ->toArray();
+    }
+
+    protected function getFormErrors(?MessageBag $errors): ?array
+    {
+        if (is_null($errors)) {
+            return null;
+        }
+
+        return $errors->toArray();
     }
 }

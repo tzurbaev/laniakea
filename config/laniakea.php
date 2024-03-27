@@ -9,6 +9,12 @@ use Laniakea\Resources\Commands\LoadInclusions;
 use Laniakea\Resources\Commands\SortResources;
 use Laniakea\Resources\Interfaces\ResourceManagerInterface;
 use Laniakea\Resources\ResourceManager;
+use Laniakea\Settings\Interfaces\SettingsGeneratorInterface;
+use Laniakea\Settings\Interfaces\SettingsUpdaterInterface;
+use Laniakea\Settings\Interfaces\SettingsValuesInterface;
+use Laniakea\Settings\SettingsGenerator;
+use Laniakea\Settings\SettingsUpdater;
+use Laniakea\Settings\SettingsValues;
 
 return [
     'registrars' => [
@@ -46,5 +52,8 @@ return [
         ResourceManagerInterface::class => ResourceManager::class,
         FormIdsGeneratorInterface::class => FormIdsGenerator::class,
         FormsManagerInterface::class => FormsManager::class,
+        SettingsGeneratorInterface::class => SettingsGenerator::class,
+        SettingsUpdaterInterface::class => SettingsUpdater::class,
+        SettingsValuesInterface::class => SettingsValues::class,
     ],
 ];

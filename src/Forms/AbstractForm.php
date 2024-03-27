@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Laniakea\Forms;
 
+use Illuminate\Contracts\Support\MessageBag;
 use Laniakea\Forms\Interfaces\FormInterface;
 
 abstract class AbstractForm implements FormInterface
 {
     protected array $settings = [];
 
-    protected function getDefaultSettings(): array
+    public function getId(): ?string
     {
-        return [];
+        return null;
     }
 
-    public function getId(): ?string
+    public function getLayout(): ?string
     {
         return null;
     }
@@ -25,11 +26,26 @@ abstract class AbstractForm implements FormInterface
         return [];
     }
 
+    public function getErrors(): ?MessageBag
+    {
+        return null;
+    }
+
+    public function getRedirectUrl(): ?string
+    {
+        return null;
+    }
+
     public function getSettings(): array
     {
         return [
             ...$this->getDefaultSettings(),
             ...$this->settings,
         ];
+    }
+
+    protected function getDefaultSettings(): array
+    {
+        return [];
     }
 }
