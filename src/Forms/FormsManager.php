@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Laniakea\Forms;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\MessageBag;
 use Laniakea\Forms\Interfaces\FormButtonInterface;
 use Laniakea\Forms\Interfaces\FormFieldInterface;
@@ -73,7 +72,7 @@ readonly class FormsManager implements FormsManagerInterface
         }
 
         return collect($sections)->map(function (FormSectionInterface $section) use ($fields) {
-            $sectionFields = Arr::only($fields, $section->getFieldNames());
+            $sectionFields = $this->getSectionFields($fields, $section->getFieldNames());
 
             if (!count($sectionFields)) {
                 return null;
@@ -86,6 +85,23 @@ readonly class FormsManager implements FormsManagerInterface
                 'fields' => $this->getFormFields($sectionFields),
             ];
         })->reject(null)->values()->toArray();
+    }
+
+    protected function getSectionFields(array $fields, array $names): array
+    {
+        // Not using Arr::only() to keep the section's order of the fields.
+
+        $sectionFields = [];
+
+        foreach ($names as $name) {
+            if (!isset($fields[$name])) {
+                continue;
+            }
+
+            $sectionFields[$name] = $fields[$name];
+        }
+
+        return $sectionFields;
     }
 
     /** @param array|FormFieldInterface[] $fields */

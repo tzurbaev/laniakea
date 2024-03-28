@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laniakea\Forms\Enums\FormButtonType;
+use Laniakea\Forms\FormsManager;
 use Laniakea\Forms\Interfaces\FormsManagerInterface;
 use Laniakea\Tests\Workbench\Factories\ArticleFactory;
 use Laniakea\Tests\Workbench\Forms\CreateArticleForm;
 use Laniakea\Tests\Workbench\Forms\CreateArticleFormWithSections;
 use Laniakea\Tests\Workbench\Forms\EditArticleForm;
+use Laniakea\Tests\Workbench\Forms\ExampleSectionForm;
 use Laniakea\Tests\Workbench\Models\Article;
 use Laniakea\Tests\Workbench\Models\ArticleCategory;
 
@@ -16,8 +18,9 @@ uses(RefreshDatabase::class);
 
 it('should generate form data', function () {
     /** @var FormsManagerInterface $manager */
-    $manager = app(FormsManagerInterface::class);
+    $manager = app(FormsManager::class);
     $form = $manager->getFormData(new CreateArticleForm());
+
     expect($form['form']['method'])->toBe('POST')
         ->and($form['form']['url'])->toBe('/articles')
         ->and($form['form']['redirect_url'])->toBe('/articles')
@@ -53,6 +56,20 @@ it('should generate sections', function () {
         ->and($form['sections'][1]['description'])->toBe('General settings.');
 });
 
+it('should use section fields in section order', function () {
+    /** @var FormsManagerInterface $manager */
+    $manager = app(FormsManager::class);
+    $form = $manager->getFormData(new ExampleSectionForm());
+
+    // Default fields order: first, second, third
+    // Sections: 1 (second), 2 (third, first)
+
+    expect($form['sections'])->toHaveCount(2)
+        ->and($form['sections'][0]['fields'][0]['name'])->toBe('second')
+        ->and($form['sections'][1]['fields'][0]['name'])->toBe('third')
+        ->and($form['sections'][1]['fields'][1]['name'])->toBe('first');
+});
+
 it('should include form values', function () {
     /** @var ArticleCategory $categor */
     $category = ArticleCategory::create(['name' => 'Sports']);
@@ -61,7 +78,7 @@ it('should include form values', function () {
     $article = ArticleFactory::new()->create(['article_category_id' => $category->id]);
 
     /** @var FormsManagerInterface $manager */
-    $manager = app(FormsManagerInterface::class);
+    $manager = app(FormsManager::class);
     $form = $manager->getFormData(new EditArticleForm($article));
 
     expect($form['form']['values'])->toBe([
