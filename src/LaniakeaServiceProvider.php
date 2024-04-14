@@ -6,6 +6,8 @@ namespace Laniakea;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\ServiceProvider;
+use Laniakea\DataTables\DataTablesManager;
+use Laniakea\DataTables\Interfaces\DataTablesManagerInterface;
 use Laniakea\Forms\FormIdsGenerator;
 use Laniakea\Forms\FormsManager;
 use Laniakea\Forms\Interfaces\FormIdsGeneratorInterface;
@@ -47,8 +49,13 @@ class LaniakeaServiceProvider extends ServiceProvider
         $this->app->instance(VersionedContainer::class, $container);
 
         $this->registerForms();
-
         $this->registerSettings();
+        $this->registerDataTables();
+    }
+
+    protected function getFreshVersionedContainer(): VersionedContainer
+    {
+        return new VersionedContainer();
     }
 
     protected function registerResourceManagerCommands(): void
@@ -66,28 +73,20 @@ class LaniakeaServiceProvider extends ServiceProvider
 
     protected function registerResourceManager(): void
     {
-        $this->app->bind(ResourceManagerInterface::class, function () {
-            return $this->app->make(
-                $this->getConfig()->get('laniakea.bindings.'.ResourceManagerInterface::class, ResourceManager::class)
-            );
-        });
-    }
-
-    protected function getFreshVersionedContainer(): VersionedContainer
-    {
-        return new VersionedContainer();
+        $this->bindPackageAbstractions([
+            ResourceManagerInterface::class => ResourceManager::class,
+        ]);
     }
 
     protected function runRegistrars(VersionedContainer $container): void
     {
-        $routeBinder = new ResourceRouteBinder();
         $versionBinder = new VersionBinder($container);
 
-        collect(config('laniakea.registrars', []))->each(function (string $name) use ($routeBinder, $versionBinder) {
+        collect(config('laniakea.registrars', []))->each(function (string $name) use ($versionBinder) {
             /** @var ResourceRegistrarInterface $registrar */
             $registrar = $this->app->make($name);
 
-            $registrar->bindRoute($routeBinder);
+            $registrar->bindRoute(new ResourceRouteBinder());
 
             if ($registrar instanceof VersionedResourceRegistrarInterface) {
                 $registrar->bindVersions($versionBinder);
@@ -112,6 +111,13 @@ class LaniakeaServiceProvider extends ServiceProvider
         ]);
     }
 
+    protected function registerDataTables(): void
+    {
+        $this->bindPackageAbstractions([
+            DataTablesManagerInterface::class => DataTablesManager::class,
+        ]);
+    }
+
     protected function getConfig(): Repository
     {
         return $this->app->make('config');
@@ -119,7 +125,6 @@ class LaniakeaServiceProvider extends ServiceProvider
 
     protected function bindPackageAbstractions(array $bindings): void
     {
-
         foreach ($bindings as $abstract => $concrete) {
             $this->app->bind($abstract, function () use ($abstract, $concrete) {
                 return $this->app->make(

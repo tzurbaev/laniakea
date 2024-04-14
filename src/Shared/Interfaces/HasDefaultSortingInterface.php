@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Laniakea\Resources\Interfaces;
+namespace Laniakea\Shared\Interfaces;
 
 interface HasDefaultSortingInterface
 {

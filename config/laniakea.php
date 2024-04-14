@@ -1,5 +1,7 @@
 <?php
 
+use Laniakea\DataTables\DataTablesManager;
+use Laniakea\DataTables\Interfaces\DataTablesManagerInterface;
 use Laniakea\Forms\FormIdsGenerator;
 use Laniakea\Forms\FormsManager;
 use Laniakea\Forms\Interfaces\FormIdsGeneratorInterface;
@@ -48,8 +50,15 @@ return [
         ],
     ],
 
+    'datatables' => [
+        'fields' => [
+            'sorting' => 'order_by',
+        ],
+    ],
+
     'bindings' => [
         ResourceManagerInterface::class => ResourceManager::class,
+        DataTablesManagerInterface::class => DataTablesManager::class,
         FormIdsGeneratorInterface::class => FormIdsGenerator::class,
         FormsManagerInterface::class => FormsManager::class,
         SettingsGeneratorInterface::class => SettingsGenerator::class,
