@@ -8,6 +8,11 @@ use Laniakea\DataTables\Interfaces\DataTableInterface;
 
 abstract class AbstractDataTable implements DataTableInterface
 {
+    public function getId(): mixed
+    {
+        return null;
+    }
+
     public function getMethod(): string
     {
         return 'GET';
@@ -23,5 +28,15 @@ abstract class AbstractDataTable implements DataTableInterface
     public function getDataPath(): ?string
     {
         return null;
+    }
+
+    public function getViews(): array
+    {
+        return [];
+    }
+
+    public function getSettings(): array
+    {
+        return [];
     }
 }

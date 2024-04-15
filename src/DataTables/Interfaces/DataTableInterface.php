@@ -6,6 +6,8 @@ namespace Laniakea\DataTables\Interfaces;
 
 interface DataTableInterface
 {
+    public function getId(): mixed;
+
     public function getMethod(): string;
 
     public function getUrl(): string;
@@ -19,4 +21,8 @@ interface DataTableInterface
 
     /** @return array|DataTableFilterInterface[] */
     public function getFilters(): array;
+
+    public function getViews(): array;
+
+    public function getSettings(): array;
 }

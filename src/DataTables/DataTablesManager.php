@@ -10,6 +10,7 @@ use Laniakea\DataTables\Interfaces\DataTableColumnInterface;
 use Laniakea\DataTables\Interfaces\DataTableFilterInterface;
 use Laniakea\DataTables\Interfaces\DataTableInterface;
 use Laniakea\DataTables\Interfaces\DataTablesManagerInterface;
+use Laniakea\DataTables\Interfaces\DataTableViewInterface;
 use Laniakea\DataTables\Interfaces\WithoutPaginationInterface;
 use Laniakea\Shared\Interfaces\HasDefaultSortingInterface;
 
@@ -18,11 +19,14 @@ readonly class DataTablesManager implements DataTablesManagerInterface
     public function getDataTableData(Request $request, DataTableInterface $dataTable): array
     {
         return [
+            'id' => $dataTable->getId(),
             'api' => $this->getApi($dataTable),
             'columns' => $this->getColumns($dataTable),
             'filters' => $this->getFilters($request, $dataTable),
             'sorting' => $this->getCurrentSorting($request, $dataTable),
             'pagination' => $this->getPagination($request, $dataTable),
+            'views' => $this->getViews($dataTable),
+            'settings' => $this->getSettings($dataTable),
         ];
     }
 
@@ -102,5 +106,19 @@ readonly class DataTablesManager implements DataTablesManagerInterface
         $count = $request->input(config('laniakea.datatables.fields.count', 'count'), config('laniakea.datatables.default_count', 15));
 
         return ['enabled' => true, 'page' => $page, 'count' => $count];
+    }
+
+    protected function getViews(DataTableInterface $dataTable): array
+    {
+        return array_map(fn (DataTableViewInterface $view) => [
+            'id' => $view->getId(),
+            'name' => $view->getName(),
+            'settings' => $view->getSettings(),
+        ], $dataTable->getViews());
+    }
+
+    protected function getSettings(DataTableInterface $dataTable): array
+    {
+        return $dataTable->getSettings();
     }
 }

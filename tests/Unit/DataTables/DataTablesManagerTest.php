@@ -8,6 +8,14 @@ use Laniakea\Tests\Workbench\DataTables\ArticlesDataTable;
 use Laniakea\Tests\Workbench\DataTables\ArticlesDataTableWithDefaultSorting;
 use Laniakea\Tests\Workbench\DataTables\ArticlesDataTableWithoutPagination;
 
+it('should include table ID', function () {
+    /** @var DataTablesManagerInterface $manager */
+    $manager = app(DataTablesManagerInterface::class);
+    $data = $manager->getDataTableData(new Request(), new ArticlesDataTable());
+
+    expect($data['id'])->toBe('ArticlesDataTable');
+});
+
 it('should generate api definition', function () {
     /** @var DataTablesManagerInterface $manager */
     $manager = app(DataTablesManagerInterface::class);
@@ -131,3 +139,33 @@ it('should should not generate pagination for datatables without pagination', fu
     ['query' => ['count' => 50], 'expected' => ['enabled' => true, 'page' => 1, 'count' => 50]],
     ['query' => ['filter' => 'value'], 'expected' => ['enabled' => true, 'page' => 1, 'count' => 15]],
 ]);
+
+it('should generate datatable views', function () {
+    /** @var DataTablesManagerInterface $manager */
+    $manager = app(DataTablesManagerInterface::class);
+    $data = $manager->getDataTableData(new Request(), new ArticlesDataTable());
+
+    expect($data['views'])->toBe([
+        [
+            'id' => 'all',
+            'name' => 'All',
+            'settings' => ['system' => true],
+        ],
+        [
+            'id' => 1,
+            'name' => 'Only Published',
+            'settings' => ['filters' => ['published' => true]],
+        ],
+    ]);
+});
+
+it('should generate datatable settings', function () {
+    /** @var DataTablesManagerInterface $manager */
+    $manager = app(DataTablesManagerInterface::class);
+    $data = $manager->getDataTableData(new Request(), new ArticlesDataTable());
+
+    expect($data['settings'])->toBe([
+        'striped' => true,
+        'responsive' => false,
+    ]);
+});

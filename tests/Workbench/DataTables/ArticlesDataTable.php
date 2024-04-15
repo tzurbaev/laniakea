@@ -7,6 +7,7 @@ namespace Laniakea\Tests\Workbench\DataTables;
 use Laniakea\DataTables\AbstractDataTable;
 use Laniakea\DataTables\DataTableColumn;
 use Laniakea\DataTables\DataTableColumnSorting;
+use Laniakea\DataTables\DataTableView;
 use Laniakea\DataTables\Enums\DataTableSortingType;
 use Laniakea\Tests\Workbench\DataTables\Columns\ArticleTitleColumn;
 use Laniakea\Tests\Workbench\DataTables\Columns\DataTableDateTimeColumn;
@@ -14,6 +15,11 @@ use Laniakea\Tests\Workbench\DataTables\Filters\DataTableItemsCountFilter;
 
 class ArticlesDataTable extends AbstractDataTable
 {
+    public function getId(): string
+    {
+        return 'ArticlesDataTable';
+    }
+
     public function getUrl(): string
     {
         return '/articles';
@@ -59,6 +65,22 @@ class ArticlesDataTable extends AbstractDataTable
     {
         return [
             new DataTableItemsCountFilter(),
+        ];
+    }
+
+    public function getViews(): array
+    {
+        return [
+            new DataTableView('all', 'All', ['system' => true]),
+            new DataTableView(1, 'Only Published', ['filters' => ['published' => true]]),
+        ];
+    }
+
+    public function getSettings(): array
+    {
+        return [
+            'striped' => true,
+            'responsive' => false,
         ];
     }
 }
