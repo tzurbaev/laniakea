@@ -10,6 +10,7 @@ use Laniakea\DataTables\Interfaces\DataTableColumnInterface;
 use Laniakea\DataTables\Interfaces\DataTableFilterInterface;
 use Laniakea\DataTables\Interfaces\DataTableInterface;
 use Laniakea\DataTables\Interfaces\DataTablesManagerInterface;
+use Laniakea\DataTables\Interfaces\WithoutPaginationInterface;
 use Laniakea\Shared\Interfaces\HasDefaultSortingInterface;
 
 readonly class DataTablesManager implements DataTablesManagerInterface
@@ -21,6 +22,7 @@ readonly class DataTablesManager implements DataTablesManagerInterface
             'columns' => $this->getColumns($dataTable),
             'filters' => $this->getFilters($request, $dataTable),
             'sorting' => $this->getCurrentSorting($request, $dataTable),
+            'pagination' => $this->getPagination($request, $dataTable),
         ];
     }
 
@@ -88,5 +90,17 @@ readonly class DataTablesManager implements DataTablesManagerInterface
             'column' => $dataTable->getDefaultSortingColumn(),
             'direction' => $dataTable->getDefaultSortingDirection(),
         ];
+    }
+
+    protected function getPagination(Request $request, DataTableInterface $dataTable): array
+    {
+        if ($dataTable instanceof WithoutPaginationInterface) {
+            return ['enabled' => false, 'page' => null, 'count' => null];
+        }
+
+        $page = $request->input(config('laniakea.datatables.fields.page', 'page'), 1);
+        $count = $request->input(config('laniakea.datatables.fields.count', 'count'), config('laniakea.datatables.default_count', 15));
+
+        return ['enabled' => true, 'page' => $page, 'count' => $count];
     }
 }

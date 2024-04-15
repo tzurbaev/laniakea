@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Laniakea\DataTables\Interfaces\DataTablesManagerInterface;
 use Laniakea\Tests\Workbench\DataTables\ArticlesDataTable;
 use Laniakea\Tests\Workbench\DataTables\ArticlesDataTableWithDefaultSorting;
+use Laniakea\Tests\Workbench\DataTables\ArticlesDataTableWithoutPagination;
 
 it('should generate api definition', function () {
     /** @var DataTablesManagerInterface $manager */
@@ -103,4 +104,30 @@ it('should generate current datatable sorting and fallback to default sorting', 
     ['query' => ['order_by' => '-title'], 'expected' => ['column' => 'title', 'direction' => 'desc']],
     ['query' => ['filter' => 'value'], 'expected' => ['column' => 'created_at', 'direction' => 'desc']],
     ['query' => [], 'expected' => ['column' => 'created_at', 'direction' => 'desc']],
+]);
+
+it('should generate current pagination', function (array $query, array $expected) {
+    /** @var DataTablesManagerInterface $manager */
+    $manager = app(DataTablesManagerInterface::class);
+    $data = $manager->getDataTableData(new Request($query), new ArticlesDataTable());
+
+    expect($data['pagination'])->toBe($expected);
+})->with([
+    ['query' => ['page' => 3], 'expected' => ['enabled' => true, 'page' => 3, 'count' => 15]],
+    ['query' => ['page' => 5, 'count' => 50], 'expected' => ['enabled' => true, 'page' => 5, 'count' => 50]],
+    ['query' => ['count' => 50], 'expected' => ['enabled' => true, 'page' => 1, 'count' => 50]],
+    ['query' => ['filter' => 'value'], 'expected' => ['enabled' => true, 'page' => 1, 'count' => 15]],
+]);
+
+it('should should not generate pagination for datatables without pagination', function (array $query) {
+    /** @var DataTablesManagerInterface $manager */
+    $manager = app(DataTablesManagerInterface::class);
+    $data = $manager->getDataTableData(new Request($query), new ArticlesDataTableWithoutPagination());
+
+    expect($data['pagination'])->toBe(['enabled' => false, 'page' => null, 'count' => null]);
+})->with([
+    ['query' => ['page' => 3], 'expected' => ['enabled' => true, 'page' => 3, 'count' => 15]],
+    ['query' => ['page' => 5, 'count' => 50], 'expected' => ['enabled' => true, 'page' => 5, 'count' => 50]],
+    ['query' => ['count' => 50], 'expected' => ['enabled' => true, 'page' => 1, 'count' => 50]],
+    ['query' => ['filter' => 'value'], 'expected' => ['enabled' => true, 'page' => 1, 'count' => 15]],
 ]);
