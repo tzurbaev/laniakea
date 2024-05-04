@@ -9,6 +9,24 @@ use Illuminate\Database\Eloquent\Builder;
 interface RepositoryQueryBuilderInterface
 {
     /**
+     * Add callback that will be executed after criteria apply.
+     *
+     * @param callable $callback
+     *
+     * @return $this
+     */
+    public function afterCriteria(callable $callback): static;
+
+    /**
+     * Add callback that will be executed before criteria apply.
+     *
+     * @param callable $callback
+     *
+     * @return $this
+     */
+    public function beforeCriteria(callable $callback): static;
+
+    /**
      * Returns original Eloquent's query builder instance.
      *
      * @return Builder
@@ -39,6 +57,11 @@ interface RepositoryQueryBuilderInterface
      * @return array|RepositoryCriterionInterface[]
      */
     public function getCriteria(): array;
+
+    /**
+     * Apply criteria.
+     */
+    public function applyCriteria(): void;
 
     /**
      * Load relations.

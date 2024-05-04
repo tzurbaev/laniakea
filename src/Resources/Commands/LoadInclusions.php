@@ -16,24 +16,26 @@ readonly class LoadInclusions implements ResourceManagerCommandInterface
 {
     public function run(RepositoryQueryBuilderInterface $query, ResourceContextInterface $context): void
     {
-        $requestedInclusions = $this->getRequestedInclusions($context->getRequest(), $context->getResource());
+        $query->beforeCriteria(function () use ($query, $context) {
+            $requestedInclusions = $this->getRequestedInclusions($context->getRequest(), $context->getResource());
 
-        if (!count($requestedInclusions)) {
-            return;
-        }
+            if (!count($requestedInclusions)) {
+                return;
+            }
 
-        $relations = collect($context->getResource()->getInclusions())
-            ->only($requestedInclusions)
-            ->flatten()
-            ->unique()
-            ->values()
-            ->all();
+            $relations = collect($context->getResource()->getInclusions())
+                ->only($requestedInclusions)
+                ->flatten()
+                ->unique()
+                ->values()
+                ->all();
 
-        if (!count($relations)) {
-            return;
-        }
+            if (!count($relations)) {
+                return;
+            }
 
-        $query->with($relations);
+            $query->with($relations);
+        });
     }
 
     protected function getRequestedInclusions(ResourceRequestInterface $request, ResourceInterface $resource): array

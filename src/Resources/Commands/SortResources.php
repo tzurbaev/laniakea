@@ -17,24 +17,26 @@ readonly class SortResources implements ResourceManagerCommandInterface
 {
     public function run(RepositoryQueryBuilderInterface $query, ResourceContextInterface $context): void
     {
-        [$column, $direction] = $this->getSorting($context->getRequest(), $context->getResource());
+        $query->afterCriteria(function () use ($query, $context) {
+            [$column, $direction] = $this->getSorting($context->getRequest(), $context->getResource());
 
-        if (is_null($column)) {
-            return;
-        }
+            if (is_null($column)) {
+                return;
+            }
 
-        /** @var ResourceSorterInterface|null $sorter */
-        $sorter = $context->getResource()->getSorters()[$column] ?? null;
+            /** @var ResourceSorterInterface|null $sorter */
+            $sorter = $context->getResource()->getSorters()[$column] ?? null;
 
-        if (is_null($sorter)) {
-            return;
-        }
+            if (is_null($sorter)) {
+                return;
+            }
 
-        if ($sorter instanceof HasResourceContextInterface) {
-            $sorter->setResourceContext($context);
-        }
+            if ($sorter instanceof HasResourceContextInterface) {
+                $sorter->setResourceContext($context);
+            }
 
-        $sorter->sort($query, $column, $direction ?? 'asc');
+            $sorter->sort($query, $column, $direction ?? 'asc');
+        });
     }
 
     protected function getSorting(ResourceRequestInterface $request, ResourceInterface $resource): ?array

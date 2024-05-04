@@ -34,9 +34,7 @@ abstract class AbstractRepository implements RepositoryInterface
             $callback($queryBuilder);
         }
 
-        foreach ($queryBuilder->getCriteria() as $criterion) {
-            $criterion->apply($queryBuilder->getQueryBuilder());
-        }
+        $queryBuilder->applyCriteria();
 
         return $queryBuilder->getQueryBuilder();
     }

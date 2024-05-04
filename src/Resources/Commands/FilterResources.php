@@ -19,28 +19,30 @@ readonly class FilterResources implements ResourceManagerCommandInterface
 {
     public function run(RepositoryQueryBuilderInterface $query, ResourceContextInterface $context): void
     {
-        $values = $this->getFilterValues(
-            $context->getRequest(),
-            $context->getResource(),
-        );
+        $query->beforeCriteria(function () use ($query, $context) {
+            $values = $this->getFilterValues(
+                $context->getRequest(),
+                $context->getResource(),
+            );
 
-        $filters = collect(
-            Arr::only(
-                $context->getResource()->getFilters(),
-                array_keys($values)
-            )
-        );
+            $filters = collect(
+                Arr::only(
+                    $context->getResource()->getFilters(),
+                    array_keys($values)
+                )
+            );
 
-        $container = Container::getInstance();
+            $container = Container::getInstance();
 
-        $filters->each(function (ResourceFilterInterface|string $handler, string $name) use ($context, $container, $query, $values) {
-            $filter = $handler instanceof ResourceFilterInterface ? $handler : $container->make($handler);
+            $filters->each(function (ResourceFilterInterface|string $handler, string $name) use ($context, $container, $query, $values) {
+                $filter = $handler instanceof ResourceFilterInterface ? $handler : $container->make($handler);
 
-            if ($filter instanceof HasResourceContextInterface) {
-                $filter->setResourceContext($context);
-            }
+                if ($filter instanceof HasResourceContextInterface) {
+                    $filter->setResourceContext($context);
+                }
 
-            $filter->apply($query, $values[$name], $values);
+                $filter->apply($query, $values[$name], $values);
+            });
         });
     }
 
