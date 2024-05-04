@@ -85,12 +85,12 @@ readonly class ResourceManager implements ResourceManagerInterface
         ?callable $callback = null,
     ): callable {
         return function (RepositoryQueryBuilderInterface $builder) use ($context, $commands, $callback) {
-            foreach ($commands as $command) {
-                $command->run($builder, $context);
-            }
-
             if (is_callable($callback)) {
                 call_user_func_array($callback, [$builder, $context]);
+            }
+
+            foreach ($commands as $command) {
+                $command->run($builder, $context);
             }
         };
     }
