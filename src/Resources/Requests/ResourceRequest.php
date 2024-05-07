@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Laniakea\Resources\Interfaces\ResourceRequestInterface;
 
-readonly class ResourceRequest implements ResourceRequestInterface
+class ResourceRequest implements ResourceRequestInterface
 {
-    public function __construct(private Request $request)
+    public function __construct(private readonly Request $request)
     {
         //
     }
