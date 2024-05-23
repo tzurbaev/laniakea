@@ -16,6 +16,26 @@ interface SettingsValuesInterface
     public function getDefaults(string $enum): array;
 
     /**
+     * Generate settings list for create.
+     *
+     * @param string     $enum
+     * @param array|null $settings
+     *
+     * @return array
+     */
+    public function getSettingsForCreate(string $enum, ?array $settings): array;
+
+    /**
+     * Generate settings values for update.
+     *
+     * @param HasSettingsInterface $model
+     * @param array|null           $settings
+     *
+     * @return array
+     */
+    public function getSettingsForUpdate(HasSettingsInterface $model, ?array $settings): array;
+
+    /**
      * Prepare given payload for persisted storage.
      *
      * @param string $enum

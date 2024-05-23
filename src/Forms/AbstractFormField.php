@@ -18,6 +18,11 @@ abstract class AbstractFormField implements FormFieldInterface
         //
     }
 
+    /**
+     * Default form field settings that can be overridden by setSetting/setSettings methods.
+     *
+     * @return array
+     */
     protected function getDefaultSettings(): array
     {
         return [];
@@ -109,5 +114,10 @@ abstract class AbstractFormField implements FormFieldInterface
         $this->setAttribute('disabled', $value);
 
         return $this;
+    }
+
+    public function setRequired(bool $required = true): static
+    {
+        $this->setAttribute('required', $required ? 'true' : 'false');
     }
 }

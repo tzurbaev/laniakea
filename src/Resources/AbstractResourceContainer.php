@@ -29,7 +29,12 @@ abstract class AbstractResourceContainer implements ResourceContainerInterface
         return $this->repositoryInstance = $this->getInstance($this->repositoryInstance, $this->repository);
     }
 
-    public function getTransformer()
+    /**
+     * Get resource transformer.
+     *
+     * @return mixed
+     */
+    public function getTransformer(): mixed
     {
         return $this->transformerInstance = $this->getInstance($this->transformerInstance, $this->transformer);
     }

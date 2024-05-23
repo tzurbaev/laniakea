@@ -14,6 +14,12 @@ use Laniakea\Resources\Interfaces\ResourceRequestInterface;
 
 readonly class LoadInclusions implements ResourceManagerCommandInterface
 {
+    /**
+     * This command performs eager loading of requested relationships.
+     *
+     * @param RepositoryQueryBuilderInterface $query
+     * @param ResourceContextInterface        $context
+     */
     public function run(RepositoryQueryBuilderInterface $query, ResourceContextInterface $context): void
     {
         $query->beforeCriteria(function () use ($query, $context) {

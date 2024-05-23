@@ -6,8 +6,18 @@ namespace Laniakea\Settings\Types;
 
 abstract readonly class AbstractArraySetting
 {
+    /**
+     * Get list of allowed cases.
+     *
+     * @return array
+     */
     abstract protected function getCases(): array;
 
+    /**
+     * Determine if empty array is allowed.
+     *
+     * @return bool
+     */
     abstract protected function validateEmpty(): bool;
 
     protected function isValidArray(mixed $value, callable $caseChecker): bool

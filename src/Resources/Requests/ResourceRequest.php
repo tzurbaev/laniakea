@@ -20,6 +20,11 @@ class ResourceRequest implements ResourceRequestInterface
         return config('laniakea.resources.fields.'.$type, $default ?? $type);
     }
 
+    /**
+     * Get underlying HTTP request instance.
+     *
+     * @return Request
+     */
     public function getRequest(): Request
     {
         return $this->request;

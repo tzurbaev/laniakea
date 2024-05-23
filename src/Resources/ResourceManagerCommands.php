@@ -17,19 +17,31 @@ readonly class ResourceManagerCommands
         //
     }
 
-    /** @return ResourceManagerCommandInterface[] */
+    /**
+     * Get commands that should be executed for pagination requests.
+     *
+     * @return ResourceManagerCommandInterface[]
+     */
     public function getPaginationCommands(): array
     {
         return $this->getCommands($this->pagination);
     }
 
-    /** @return ResourceManagerCommandInterface[] */
+    /**
+     * Get commands that should be executed for list requests.
+     *
+     * @return ResourceManagerCommandInterface[]
+     */
     public function getListCommands(): array
     {
         return $this->getCommands($this->list);
     }
 
-    /** @return ResourceManagerCommandInterface[] */
+    /**
+     * Get commands that should be executed for item requests.
+     *
+     * @return ResourceManagerCommandInterface[]
+     */
     public function getItemCommands(): array
     {
         return $this->getCommands($this->item);

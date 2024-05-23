@@ -8,5 +8,12 @@ use Laniakea\Repositories\Interfaces\RepositoryQueryBuilderInterface;
 
 interface ResourceFilterInterface
 {
+    /**
+     * Apply current filter to the query.
+     *
+     * @param RepositoryQueryBuilderInterface $query
+     * @param mixed                           $value
+     * @param array                           $values
+     */
     public function apply(RepositoryQueryBuilderInterface $query, mixed $value, array $values): void;
 }

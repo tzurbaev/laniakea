@@ -29,6 +29,11 @@ use Laniakea\Versions\VersionedContainer;
 
 class LaniakeaServiceProvider extends ServiceProvider
 {
+    /**
+     * Boot services.
+     *
+     * @param VersionedContainer $versionedContainer
+     */
     public function boot(VersionedContainer $versionedContainer): void
     {
         $this->publishes([
@@ -38,6 +43,9 @@ class LaniakeaServiceProvider extends ServiceProvider
         $this->runRegistrars($versionedContainer);
     }
 
+    /**
+     * Register services.
+     */
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/laniakea.php', 'laniakea');

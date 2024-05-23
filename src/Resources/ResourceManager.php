@@ -78,7 +78,15 @@ readonly class ResourceManager implements ResourceManagerInterface
         );
     }
 
-    /** @param ResourceManagerCommandInterface[] $commands */
+    /**
+     * Creates repository callback with required resource manager commands.
+     *
+     * @param ResourceContextInterface          $context
+     * @param ResourceManagerCommandInterface[] $commands
+     * @param callable|null                     $callback
+     *
+     * @return callable
+     */
     protected function getRepositoryCallback(
         ResourceContextInterface $context,
         array $commands,

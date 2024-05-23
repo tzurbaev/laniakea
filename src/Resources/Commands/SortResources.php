@@ -15,6 +15,12 @@ use Laniakea\Shared\Interfaces\HasDefaultSortingInterface;
 
 readonly class SortResources implements ResourceManagerCommandInterface
 {
+    /**
+     * This command applies resource sorting to the current query.
+     *
+     * @param RepositoryQueryBuilderInterface $query
+     * @param ResourceContextInterface        $context
+     */
     public function run(RepositoryQueryBuilderInterface $query, ResourceContextInterface $context): void
     {
         $query->afterCriteria(function () use ($query, $context) {

@@ -17,6 +17,12 @@ use Laniakea\Resources\Interfaces\ResourceRequestInterface;
 
 readonly class FilterResources implements ResourceManagerCommandInterface
 {
+    /**
+     * This command applies resource filters to the current query.
+     *
+     * @param RepositoryQueryBuilderInterface $query
+     * @param ResourceContextInterface        $context
+     */
     public function run(RepositoryQueryBuilderInterface $query, ResourceContextInterface $context): void
     {
         $query->beforeCriteria(function () use ($query, $context) {

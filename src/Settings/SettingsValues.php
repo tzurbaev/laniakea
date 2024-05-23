@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Laniakea\Settings;
 
 use Illuminate\Support\Arr;
+use Laniakea\Settings\Interfaces\HasSettingsInterface;
 use Laniakea\Settings\Interfaces\SettingInterface;
 use Laniakea\Settings\Interfaces\SettingsGeneratorInterface;
 use Laniakea\Settings\Interfaces\SettingsValuesInterface;
@@ -26,6 +27,21 @@ readonly class SettingsValues implements SettingsValuesInterface
         }
 
         return $values;
+    }
+
+    public function getSettingsForCreate(string $enum, ?array $settings): array
+    {
+        return $this->toPersisted($enum, $settings ?? []);
+    }
+
+    public function getSettingsForUpdate(HasSettingsInterface $model, ?array $settings): array
+    {
+        $persisted = $this->toPersisted(
+            $model->getSettingsEnum(),
+            $settings ?? [],
+        );
+
+        return array_merge($model->getCurrentSettings() ?? [], $persisted);
     }
 
     public function toPersisted(string $enum, array $payload, bool $ignoreRequestPaths = false): array

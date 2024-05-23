@@ -19,6 +19,11 @@ class ValidationException extends BaseHttpException
         $this->addMeta(['errors' => $this->validationException->errors()]);
     }
 
+    /**
+     * Get the original validation exception.
+     *
+     * @return BaseValidationException
+     */
     public function getOriginalValidationException(): BaseValidationException
     {
         return $this->validationException;
