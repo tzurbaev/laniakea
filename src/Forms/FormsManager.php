@@ -12,9 +12,9 @@ use Laniakea\Forms\Interfaces\FormInterface;
 use Laniakea\Forms\Interfaces\FormSectionInterface;
 use Laniakea\Forms\Interfaces\FormsManagerInterface;
 
-readonly class FormsManager implements FormsManagerInterface
+class FormsManager implements FormsManagerInterface
 {
-    public function __construct(private FormIdsGeneratorInterface $idsGenerator)
+    public function __construct(private readonly FormIdsGeneratorInterface $idsGenerator)
     {
         //
     }

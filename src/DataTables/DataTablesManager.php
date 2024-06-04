@@ -14,7 +14,7 @@ use Laniakea\DataTables\Interfaces\DataTableViewInterface;
 use Laniakea\DataTables\Interfaces\WithoutPaginationInterface;
 use Laniakea\Shared\Interfaces\HasDefaultSortingInterface;
 
-readonly class DataTablesManager implements DataTablesManagerInterface
+class DataTablesManager implements DataTablesManagerInterface
 {
     public function getDataTableData(Request $request, DataTableInterface $dataTable): array
     {

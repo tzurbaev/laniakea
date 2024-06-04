@@ -89,3 +89,70 @@ it('should use options list from select field\'s constructor', function () {
         ['id' => 'mx', 'name' => 'Mexico'],
     ]);
 });
+
+it('should not override existed settings via setSettings method', function () {
+    $field = new SelectField('Country', [
+        ['id' => 'us', 'name' => 'United States'],
+        ['id' => 'ca', 'name' => 'Canada'],
+        ['id' => 'mx', 'name' => 'Mexico'],
+    ]);
+
+    expect($field->getSettings()['options'])->toBe([
+        ['id' => 'us', 'name' => 'United States'],
+        ['id' => 'ca', 'name' => 'Canada'],
+        ['id' => 'mx', 'name' => 'Mexico'],
+    ]);
+
+    $field->setSettings(['optional' => true]);
+
+    expect($field->getSettings()['options'])->toBe([
+        ['id' => 'us', 'name' => 'United States'],
+        ['id' => 'ca', 'name' => 'Canada'],
+        ['id' => 'mx', 'name' => 'Mexico'],
+    ])->and($field->getSettings()['optional'])->toBeTrue();
+});
+
+it('should not include attributes key if there is no attributes', function () {
+    $field = new SelectField('Country', [
+        ['id' => 'us', 'name' => 'United States'],
+        ['id' => 'ca', 'name' => 'Canada'],
+        ['id' => 'mx', 'name' => 'Mexico'],
+    ]);
+
+    expect($field->getSettings())->toBe([
+        'options' => [
+            ['id' => 'us', 'name' => 'United States'],
+            ['id' => 'ca', 'name' => 'Canada'],
+            ['id' => 'mx', 'name' => 'Mexico'],
+        ],
+    ]);
+});
+
+it('should include attributes key if there is any attributes', function () {
+    $field = new SelectField('Country', [
+        ['id' => 'us', 'name' => 'United States'],
+        ['id' => 'ca', 'name' => 'Canada'],
+        ['id' => 'mx', 'name' => 'Mexico'],
+    ]);
+
+    $field->setAttribute('class', 'form-control')
+        ->setRequired()
+        ->setAttributes([
+            'data-autocomplete' => 'yes',
+            'data-autocomplete-type' => 'country',
+        ]);
+
+    expect($field->getSettings())->toBe([
+        'options' => [
+            ['id' => 'us', 'name' => 'United States'],
+            ['id' => 'ca', 'name' => 'Canada'],
+            ['id' => 'mx', 'name' => 'Mexico'],
+        ],
+        'attributes' => [
+            'class' => 'form-control',
+            'required' => true,
+            'data-autocomplete' => 'yes',
+            'data-autocomplete-type' => 'country',
+        ],
+    ]);
+});

@@ -10,8 +10,8 @@ use Laniakea\DataTables\Interfaces\DataTableColumnSortingInterface;
 class DataTableColumn implements DataTableColumnInterface
 {
     public function __construct(
-        protected readonly string $type,
-        protected readonly ?string $label = null,
+        protected string $type,
+        protected ?string $label = null,
         protected ?DataTableColumnSortingInterface $sorting = null,
         protected array $settings = []
     ) {

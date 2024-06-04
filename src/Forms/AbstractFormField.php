@@ -12,6 +12,7 @@ abstract class AbstractFormField implements FormFieldInterface
     protected ?string $id = null;
     protected ?string $hint = null;
     protected array $settings = [];
+    protected array $attributes = [];
 
     public function __construct(protected ?string $label = null)
     {
@@ -73,7 +74,9 @@ abstract class AbstractFormField implements FormFieldInterface
 
     public function setSettings(array $settings): static
     {
-        $this->settings = $settings;
+        foreach ($settings as $key => $value) {
+            $this->setSetting($key, $value);
+        }
 
         return $this;
     }
@@ -83,12 +86,13 @@ abstract class AbstractFormField implements FormFieldInterface
         return [
             ...$this->getDefaultSettings(),
             ...$this->settings,
+            ...(!empty($this->attributes) ? ['attributes' => $this->attributes] : []),
         ];
     }
 
     public function setAttribute(string $key, mixed $value): static
     {
-        $this->setSetting('attributes.'.$key, $value);
+        $this->attributes[$key] = $value;
 
         return $this;
     }
@@ -111,13 +115,11 @@ abstract class AbstractFormField implements FormFieldInterface
 
     public function setDisabled(bool $value = true): static
     {
-        $this->setAttribute('disabled', $value);
-
-        return $this;
+        return $this->setAttribute('disabled', $value);
     }
 
     public function setRequired(bool $required = true): static
     {
-        $this->setAttribute('required', $required ? 'true' : 'false');
+        return $this->setAttribute('required', $required);
     }
 }
