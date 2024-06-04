@@ -29,6 +29,16 @@ abstract class AbstractFormField implements FormFieldInterface
         return [];
     }
 
+    /**
+     * Default form field attributes that can be overridden by setAttribute/setAttributes methods.
+     *
+     * @return array
+     */
+    protected function getDefaultAttributes(): array
+    {
+        return [];
+    }
+
     public function getId(): ?string
     {
         return $this->id;
@@ -83,10 +93,20 @@ abstract class AbstractFormField implements FormFieldInterface
 
     public function getSettings(): array
     {
+        $attributes = $this->getAttributes();
+
         return [
             ...$this->getDefaultSettings(),
             ...$this->settings,
-            ...(!empty($this->attributes) ? ['attributes' => $this->attributes] : []),
+            ...(!empty($attributes) ? ['attributes' => $attributes] : []),
+        ];
+    }
+
+    public function getAttributes(): array
+    {
+        return [
+            ...$this->getDefaultAttributes(),
+            ...$this->attributes,
         ];
     }
 

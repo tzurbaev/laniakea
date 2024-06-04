@@ -13,12 +13,10 @@ class TextField extends AbstractFormField
         return 'TextField';
     }
 
-    protected function getDefaultSettings(): array
+    protected function getDefaultAttributes(): array
     {
         return [
-            'attributes' => [
-                'type' => 'text',
-            ],
+            'type' => 'text',
         ];
     }
 

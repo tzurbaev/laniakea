@@ -5,6 +5,27 @@ declare(strict_types=1);
 use Laniakea\Forms\Fields\SelectField;
 use Laniakea\Forms\Fields\TextField;
 
+it('should have default input type for text field', function () {
+    $field = new TextField('New password');
+
+    expect($field->getSettings())->toBe([
+        'attributes' => ['type' => 'text'],
+    ]);
+
+    $field->setAttribute('autocomplete', 'new-password')
+        ->setAttribute('data-lpignore', 'true')
+        ->setSetting('visibility_toggle', true);
+
+    expect($field->getSettings())->toBe([
+        'visibility_toggle' => true,
+        'attributes' => [
+            'type' => 'text',
+            'autocomplete' => 'new-password',
+            'data-lpignore' => 'true',
+        ],
+    ]);
+});
+
 it('should generate text field data', function () {
     $field = new TextField('New password');
     $field->setId('Field-Password')
