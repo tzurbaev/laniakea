@@ -1,23 +1,5 @@
 <?php
 
-use Laniakea\DataTables\DataTablesManager;
-use Laniakea\DataTables\Interfaces\DataTablesManagerInterface;
-use Laniakea\Forms\FormIdsGenerator;
-use Laniakea\Forms\FormsManager;
-use Laniakea\Forms\Interfaces\FormIdsGeneratorInterface;
-use Laniakea\Forms\Interfaces\FormsManagerInterface;
-use Laniakea\Resources\Commands\FilterResources;
-use Laniakea\Resources\Commands\LoadInclusions;
-use Laniakea\Resources\Commands\SortResources;
-use Laniakea\Resources\Interfaces\ResourceManagerInterface;
-use Laniakea\Resources\ResourceManager;
-use Laniakea\Settings\Interfaces\SettingsGeneratorInterface;
-use Laniakea\Settings\Interfaces\SettingsUpdaterInterface;
-use Laniakea\Settings\Interfaces\SettingsValuesInterface;
-use Laniakea\Settings\SettingsGenerator;
-use Laniakea\Settings\SettingsUpdater;
-use Laniakea\Settings\SettingsValues;
-
 return [
     'registrars' => [
         // List your resource registrars here
@@ -33,19 +15,19 @@ return [
 
         'commands' => [
             'pagination' => [
-                FilterResources::class,
-                LoadInclusions::class,
-                SortResources::class,
+                Laniakea\Resources\Commands\FilterResources::class,
+                Laniakea\Resources\Commands\LoadInclusions::class,
+                Laniakea\Resources\Commands\SortResources::class,
             ],
 
             'list' => [
-                FilterResources::class,
-                LoadInclusions::class,
-                SortResources::class,
+                Laniakea\Resources\Commands\FilterResources::class,
+                Laniakea\Resources\Commands\LoadInclusions::class,
+                Laniakea\Resources\Commands\SortResources::class,
             ],
 
             'item' => [
-                LoadInclusions::class,
+                Laniakea\Resources\Commands\LoadInclusions::class,
             ],
         ],
     ],
@@ -61,12 +43,12 @@ return [
     ],
 
     'bindings' => [
-        ResourceManagerInterface::class => ResourceManager::class,
-        DataTablesManagerInterface::class => DataTablesManager::class,
-        FormIdsGeneratorInterface::class => FormIdsGenerator::class,
-        FormsManagerInterface::class => FormsManager::class,
-        SettingsGeneratorInterface::class => SettingsGenerator::class,
-        SettingsUpdaterInterface::class => SettingsUpdater::class,
-        SettingsValuesInterface::class => SettingsValues::class,
+        Laniakea\Resources\Interfaces\ResourceManagerInterface::class => Laniakea\Resources\ResourceManager::class,
+        Laniakea\DataTables\Interfaces\DataTablesManagerInterface::class => Laniakea\DataTables\DataTablesManager::class,
+        Laniakea\Forms\Interfaces\FormIdsGeneratorInterface::class => Laniakea\Forms\FormIdsGenerator::class,
+        Laniakea\Forms\Interfaces\FormsManagerInterface::class => Laniakea\Forms\FormsManager::class,
+        Laniakea\Settings\Interfaces\SettingsGeneratorInterface::class => Laniakea\Settings\SettingsGenerator::class,
+        Laniakea\Settings\Interfaces\SettingsUpdaterInterface::class => Laniakea\Settings\SettingsUpdater::class,
+        Laniakea\Settings\Interfaces\SettingsValuesInterface::class => Laniakea\Settings\SettingsValues::class,
     ],
 ];
