@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laniakea\DataTables;
 
+use Laniakea\DataTables\Interfaces\DataTableFilterInterface;
 use Laniakea\DataTables\Interfaces\DataTableInterface;
 
 abstract class AbstractDataTable implements DataTableInterface
@@ -23,6 +24,11 @@ abstract class AbstractDataTable implements DataTableInterface
         return [
             'Accept' => 'application/json',
         ];
+    }
+
+    public function getFilters(): array
+    {
+        return [];
     }
 
     public function getDataPath(): ?string
