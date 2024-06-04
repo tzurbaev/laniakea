@@ -14,4 +14,13 @@ interface FormsManagerInterface
      * @return array
      */
     public function getFormData(FormInterface $form): array;
+
+    /**
+     * Generates JSON string out of the form.
+     *
+     * @param FormInterface $form
+     *
+     * @return string
+     */
+    public function getFormJson(FormInterface $form): string;
 }

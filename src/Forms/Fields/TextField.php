@@ -27,21 +27,21 @@ class TextField extends AbstractFormField
         return $this;
     }
 
-    public function setMinValue(int $length): static
+    public function setMinValue(mixed $length): static
     {
         $this->setAttribute('min', $length);
 
         return $this;
     }
 
-    public function setMaxValue(int $length): static
+    public function setMaxValue(mixed $length): static
     {
         $this->setAttribute('max', $length);
 
         return $this;
     }
 
-    public function setStep(int $step): static
+    public function setStep(mixed $step): static
     {
         $this->setAttribute('step', $step);
 

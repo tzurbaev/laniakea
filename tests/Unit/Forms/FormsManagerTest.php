@@ -87,3 +87,45 @@ it('should include form values', function () {
         'content' => $article->content,
     ]);
 });
+
+it('is expected to have empty JSON arrays instead of JSON objects in manual JSON encoding', function () {
+    /** @var FormsManagerInterface $manager */
+    $manager = app(FormsManager::class);
+    $form = json_encode($manager->getFormData(new CreateArticleForm()));
+
+    expect(str_contains($form, 'settings":{}'))->toBeFalse()
+        ->and(str_contains($form, 'settings":[]'))->toBeTrue();
+});
+
+it('should generate JSON objects for empty arrays via getFormJson', function () {
+    /** @var FormsManagerInterface $manager */
+    $manager = app(FormsManager::class);
+
+    // CreateArticleForm does not have any arrays that should be preserved as arrays.
+    $form = $manager->getFormJson(new CreateArticleForm());
+
+    expect(str_contains($form, 'settings":{}'))->toBeTrue()
+        ->and(str_contains($form, 'settings":[]'))->toBeFalse()
+        ->and(str_contains($form, 'values":{}'))->toBeTrue()
+        ->and(str_contains($form, 'values":[]'))->toBeFalse()
+        ->and(str_contains($form, ':[]'))->toBeFalse();
+});
+
+it('should keep valid JSON arrays in getFormJson', function () {
+    /** @var ArticleCategory $categor */
+    $category = ArticleCategory::create(['name' => 'Sports']);
+
+    /** @var Article $article */
+    $article = ArticleFactory::new()->create(['article_category_id' => $category->id]);
+
+    /** @var FormsManagerInterface $manager */
+    $manager = app(FormsManager::class);
+
+    // EditArticleForm has an array that should be preserved as array.
+    $form = $manager->getFormJson(new EditArticleForm($article));
+
+    expect(str_contains($form, 'settings":{}'))->toBeTrue()
+        ->and(str_contains($form, 'settings":[]'))->toBeFalse()
+        ->and(str_contains($form, 'values":[]'))->toBeFalse()
+        ->and(str_contains($form, 'empty_array":[]'))->toBeTrue();
+});

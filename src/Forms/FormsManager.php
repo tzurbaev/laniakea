@@ -14,6 +14,13 @@ use Laniakea\Forms\Interfaces\FormsManagerInterface;
 
 class FormsManager implements FormsManagerInterface
 {
+    /**
+     * Required to force empty arrays to be objects in the JSON output.
+     * We're not using json_encode flag JSON_FORCE_OBJECT because it
+     * would convert valid empty arrays into JSON objects as well.
+     */
+    private bool $forceEmptyArraysToObjects = false;
+
     public function __construct(private readonly FormIdsGeneratorInterface $idsGenerator)
     {
         //
@@ -21,10 +28,31 @@ class FormsManager implements FormsManagerInterface
 
     public function getFormData(FormInterface $form): array
     {
+        $this->forceEmptyArraysToObjects = false;
+
         return [
             'form' => $this->getForm($form),
             'sections' => $this->getFormSections($form->getSections(), $form->getFields()),
         ];
+    }
+
+    public function getFormJson(FormInterface $form): string
+    {
+        $this->forceEmptyArraysToObjects = true;
+
+        return json_encode([
+            'form' => $this->getForm($form),
+            'sections' => $this->getFormSections($form->getSections(), $form->getFields()),
+        ]);
+    }
+
+    protected function getValidJsonObject(array $possiblyEmptyArray): array|\stdClass
+    {
+        if (!$this->forceEmptyArraysToObjects) {
+            return $possiblyEmptyArray;
+        }
+
+        return empty($possiblyEmptyArray) ? new \stdClass() : $possiblyEmptyArray;
     }
 
     protected function getForm(FormInterface $form): array
@@ -35,10 +63,10 @@ class FormsManager implements FormsManagerInterface
             'method' => $form->getMethod(),
             'url' => $form->getUrl(),
             'redirect_url' => $form->getRedirectUrl(),
-            'headers' => $form->getHttpHeaders(),
+            'headers' => $this->getValidJsonObject($form->getHttpHeaders()),
             'buttons' => $this->getFormButtons($form->getButtons()),
-            'settings' => $form->getSettings(),
-            'values' => $form->getValues(),
+            'settings' => $this->getValidJsonObject($form->getSettings()),
+            'values' => $this->getValidJsonObject($form->getValues()),
             'errors' => $this->getFormErrors($form->getErrors()),
         ];
     }
@@ -50,7 +78,7 @@ class FormsManager implements FormsManagerInterface
             'type' => $button->getType()->value,
             'label' => $button->getLabel(),
             'url' => $button->getUrl(),
-            'settings' => $button->getSettings(),
+            'settings' => $this->getValidJsonObject($button->getSettings()),
         ], $buttons);
     }
 
@@ -114,7 +142,7 @@ class FormsManager implements FormsManagerInterface
                 'name' => $name,
                 'label' => $field->getLabel(),
                 'hint' => $field->getHint(),
-                'settings' => $field->getSettings(),
+                'settings' => $this->getValidJsonObject($field->getSettings()),
             ])
             ->values()
             ->toArray();
@@ -126,6 +154,6 @@ class FormsManager implements FormsManagerInterface
             return null;
         }
 
-        return $errors->toArray();
+        return $this->getValidJsonObject($errors->toArray());
     }
 }

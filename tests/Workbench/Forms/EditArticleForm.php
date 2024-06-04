@@ -35,6 +35,13 @@ class EditArticleForm extends AbstractForm
         return '/home';
     }
 
+    protected function getDefaultSettings(): array
+    {
+        return [
+            'empty_array' => [],
+        ];
+    }
+
     public function getFields(): array
     {
         return [
