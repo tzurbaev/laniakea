@@ -6,8 +6,6 @@ namespace Laniakea;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\ServiceProvider;
-use Laniakea\DataTables\DataTablesManager;
-use Laniakea\DataTables\Interfaces\DataTablesManagerInterface;
 use Laniakea\Forms\FormIdsGenerator;
 use Laniakea\Forms\FormsManager;
 use Laniakea\Forms\Interfaces\FormIdsGeneratorInterface;
@@ -58,7 +56,6 @@ class LaniakeaServiceProvider extends ServiceProvider
 
         $this->registerForms();
         $this->registerSettings();
-        $this->registerDataTables();
     }
 
     protected function getFreshVersionedContainer(): VersionedContainer
@@ -116,13 +113,6 @@ class LaniakeaServiceProvider extends ServiceProvider
             SettingsGeneratorInterface::class => SettingsGenerator::class,
             SettingsUpdaterInterface::class => SettingsUpdater::class,
             SettingsValuesInterface::class => SettingsValues::class,
-        ]);
-    }
-
-    protected function registerDataTables(): void
-    {
-        $this->bindPackageAbstractions([
-            DataTablesManagerInterface::class => DataTablesManager::class,
         ]);
     }
 

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Laniakea\Resources\Commands;
 
 use Laniakea\Repositories\Interfaces\RepositoryQueryBuilderInterface;
+use Laniakea\Resources\Interfaces\HasDefaultSortingInterface;
 use Laniakea\Resources\Interfaces\HasResourceContextInterface;
 use Laniakea\Resources\Interfaces\ResourceContextInterface;
 use Laniakea\Resources\Interfaces\ResourceInterface;
 use Laniakea\Resources\Interfaces\ResourceManagerCommandInterface;
 use Laniakea\Resources\Interfaces\ResourceRequestInterface;
 use Laniakea\Resources\Interfaces\ResourceSorterInterface;
-use Laniakea\Shared\Interfaces\HasDefaultSortingInterface;
 
 readonly class SortResources implements ResourceManagerCommandInterface
 {

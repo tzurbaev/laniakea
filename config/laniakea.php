@@ -32,19 +32,8 @@ return [
         ],
     ],
 
-    'datatables' => [
-        'default_count' => 15,
-
-        'fields' => [
-            'count' => 'count',
-            'page' => 'page',
-            'sorting' => 'order_by',
-        ],
-    ],
-
     'bindings' => [
         Laniakea\Resources\Interfaces\ResourceManagerInterface::class => Laniakea\Resources\ResourceManager::class,
-        Laniakea\DataTables\Interfaces\DataTablesManagerInterface::class => Laniakea\DataTables\DataTablesManager::class,
         Laniakea\Forms\Interfaces\FormIdsGeneratorInterface::class => Laniakea\Forms\FormIdsGenerator::class,
         Laniakea\Forms\Interfaces\FormsManagerInterface::class => Laniakea\Forms\FormsManager::class,
         Laniakea\Settings\Interfaces\SettingsGeneratorInterface::class => Laniakea\Settings\SettingsGenerator::class,
