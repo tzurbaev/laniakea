@@ -34,6 +34,11 @@ class SettingsDecorator implements SettingsDecoratorInterface
         return Container::getInstance()->make(static::class, ['model' => $model]);
     }
 
+    /**
+     * Create fresh settings values from the model.
+     *
+     * @return array
+     */
     protected function getFreshSettings(): array
     {
         return $this->values->fromPersisted(
@@ -42,6 +47,9 @@ class SettingsDecorator implements SettingsDecoratorInterface
         );
     }
 
+    /**
+     * Ensure settings are initialized.
+     */
     protected function guardSettings(): void
     {
         if (is_null($this->settings)) {
@@ -49,6 +57,14 @@ class SettingsDecorator implements SettingsDecoratorInterface
         }
     }
 
+    /**
+     * Get value for the given setting.
+     *
+     * @param \BackedEnum|string $name
+     * @param mixed|null         $default
+     *
+     * @return mixed
+     */
     public function getValue(\BackedEnum|string $name, mixed $default = null): mixed
     {
         $this->guardSettings();
@@ -58,6 +74,11 @@ class SettingsDecorator implements SettingsDecoratorInterface
         return array_key_exists($key, $this->settings) ? $this->settings[$key] : $default;
     }
 
+    /**
+     * Get all settings values.
+     *
+     * @return array
+     */
     public function getSettings(): array
     {
         $this->guardSettings();
@@ -65,6 +86,15 @@ class SettingsDecorator implements SettingsDecoratorInterface
         return $this->settings;
     }
 
+    /**
+     * Update settings with given values.
+     * Use $ignoreRequestPaths to skip request path checks (or use `fill` method).
+     *
+     * @param array $settings
+     * @param bool  $ignoreRequestPaths
+     *
+     * @return $this
+     */
     public function update(array $settings, bool $ignoreRequestPaths = false): static
     {
         $updated = $this->updater->update(
@@ -78,6 +108,13 @@ class SettingsDecorator implements SettingsDecoratorInterface
         return $this;
     }
 
+    /**
+     * Update settings with given values and ignore request paths.
+     *
+     * @param array $settings
+     *
+     * @return $this
+     */
     public function fill(array $settings): static
     {
         return $this->update($settings, ignoreRequestPaths: true);

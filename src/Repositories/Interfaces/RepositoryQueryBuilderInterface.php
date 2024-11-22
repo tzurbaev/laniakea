@@ -59,12 +59,12 @@ interface RepositoryQueryBuilderInterface
     public function getCriteria(): array;
 
     /**
-     * Apply criteria.
+     * Apply criteria to the query builder.
      */
     public function applyCriteria(): void;
 
     /**
-     * Load relations.
+     * Eagerly load Eloquent model's relations.
      *
      * @param array $relations
      *

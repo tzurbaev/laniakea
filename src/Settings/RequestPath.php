@@ -14,6 +14,11 @@ readonly class RequestPath implements RequestPathAttributeInterface
         //
     }
 
+    /**
+     * Get request path for current setting.
+     *
+     * @return string
+     */
     public function getPath(): string
     {
         return $this->path;

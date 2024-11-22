@@ -13,6 +13,11 @@ readonly class ApiVersion implements ApiVersionInterface
         //
     }
 
+    /**
+     * Get API version name.
+     *
+     * @return string
+     */
     public function getName(): string
     {
         return $this->name;

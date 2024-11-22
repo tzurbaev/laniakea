@@ -11,31 +11,61 @@ abstract class AbstractForm implements FormInterface
 {
     protected array $settings = [];
 
+    /**
+     * Form ID.
+     *
+     * @return string|null
+     */
     public function getId(): ?string
     {
         return null;
     }
 
+    /**
+     * Form layout type.
+     *
+     * @return string|null
+     */
     public function getLayout(): ?string
     {
         return null;
     }
 
-    public function getHttpHeaders(): array
-    {
-        return [];
-    }
-
-    public function getErrors(): ?MessageBag
-    {
-        return null;
-    }
-
+    /**
+     * Form redirect URL.
+     *
+     * @return string|null
+     */
     public function getRedirectUrl(): ?string
     {
         return null;
     }
 
+    /**
+     * HTTP headers that should be sent with the form submission.
+     *
+     * @return array
+     */
+    public function getHttpHeaders(): array
+    {
+        return [];
+    }
+
+    /**
+     * Validation errors for the current request.
+     *
+     * @return MessageBag|null
+     */
+    public function getErrors(): ?MessageBag
+    {
+        return null;
+    }
+
+    /**
+     * Additional settings for the form.
+     *
+     * @return array
+     */
     public function getSettings(): array
     {
         return [
@@ -44,6 +74,11 @@ abstract class AbstractForm implements FormInterface
         ];
     }
 
+    /**
+     * Form's default settings.
+     *
+     * @return array
+     */
     protected function getDefaultSettings(): array
     {
         return [];

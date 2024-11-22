@@ -45,6 +45,14 @@ readonly class SortResources implements ResourceManagerCommandInterface
         });
     }
 
+    /**
+     * Get either requested sorting, default sorting, or no sorting at all.
+     *
+     * @param ResourceRequestInterface $request
+     * @param ResourceInterface        $resource
+     *
+     * @return array|null
+     */
     protected function getSorting(ResourceRequestInterface $request, ResourceInterface $resource): ?array
     {
         $column = $request->getSortingColumn();

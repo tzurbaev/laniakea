@@ -20,21 +20,44 @@ class ResourceContext implements ResourceContextInterface
         //
     }
 
+    /**
+     * Get current resource request instance.
+     *
+     * @return ResourceRequestInterface
+     */
     public function getRequest(): ResourceRequestInterface
     {
         return $this->request;
     }
 
+    /**
+     * Get resource instance.
+     *
+     * @return ResourceInterface
+     */
     public function getResource(): ResourceInterface
     {
         return $this->resource;
     }
 
+    /**
+     * Get repository instance.
+     *
+     * @return RepositoryInterface
+     */
     public function getRepository(): RepositoryInterface
     {
         return $this->repository;
     }
 
+    /**
+     * Set custom context data.
+     *
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return $this
+     */
     public function setContext(string $key, mixed $value): static
     {
         $this->context[$key] = $value;
@@ -42,6 +65,13 @@ class ResourceContext implements ResourceContextInterface
         return $this;
     }
 
+    /**
+     * Get custom context data.
+     *
+     * @param string|null $key
+     *
+     * @return mixed
+     */
     public function getContext(?string $key = null): mixed
     {
         if (is_null($key)) {

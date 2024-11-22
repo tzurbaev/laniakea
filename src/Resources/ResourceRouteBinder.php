@@ -14,6 +14,15 @@ use Laniakea\Resources\Interfaces\ResourceRouteBinderInterface;
 
 readonly class ResourceRouteBinder implements ResourceRouteBinderInterface
 {
+    /**
+     * Create route model binding for the given resource.
+     *
+     * @param string                     $name
+     * @param string|ResourceInterface   $resource
+     * @param string|RepositoryInterface $repository
+     * @param string|\Throwable|null     $notFoundException
+     * @param array                      $context
+     */
     public function bind(
         string $name,
         string|ResourceInterface $resource,
@@ -43,6 +52,13 @@ readonly class ResourceRouteBinder implements ResourceRouteBinderInterface
         });
     }
 
+    /**
+     * Get custom exception instance.
+     *
+     * @param string|\Throwable|null $e
+     *
+     * @return \Throwable|null
+     */
     protected function getException(string|\Throwable|null $e): ?\Throwable
     {
         if (is_null($e)) {
@@ -52,11 +68,29 @@ readonly class ResourceRouteBinder implements ResourceRouteBinderInterface
         return $e instanceof \Throwable ? $e : new $e();
     }
 
+    /**
+     * Get resource instance.
+     *
+     * @param string|ResourceInterface $resource
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     *
+     * @return ResourceInterface
+     */
     protected function getResource(string|ResourceInterface $resource): ResourceInterface
     {
         return $resource instanceof ResourceInterface ? $resource : Container::getInstance()->make($resource);
     }
 
+    /**
+     * Get repository instance.
+     *
+     * @param string|RepositoryInterface $repository
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     *
+     * @return RepositoryInterface
+     */
     protected function getRepository(string|RepositoryInterface $repository): RepositoryInterface
     {
         return $repository instanceof RepositoryInterface ? $repository : Container::getInstance()->make($repository);

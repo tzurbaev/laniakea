@@ -26,6 +26,13 @@ class FormsManager implements FormsManagerInterface
         //
     }
 
+    /**
+     * Generates form data that will be used in frontend.
+     *
+     * @param FormInterface $form
+     *
+     * @return array
+     */
     public function getFormData(FormInterface $form): array
     {
         $this->forceEmptyArraysToObjects = false;
@@ -36,6 +43,13 @@ class FormsManager implements FormsManagerInterface
         ];
     }
 
+    /**
+     * Generates JSON string for the form.
+     *
+     * @param FormInterface $form
+     *
+     * @return string
+     */
     public function getFormJson(FormInterface $form): string
     {
         $this->forceEmptyArraysToObjects = true;
@@ -46,6 +60,13 @@ class FormsManager implements FormsManagerInterface
         ]);
     }
 
+    /**
+     * Convert empty arrays into instance of \stdClass if $forceEmptyArraysToObjects is true.
+     *
+     * @param array $possiblyEmptyArray
+     *
+     * @return array|\stdClass
+     */
     protected function getValidJsonObject(array $possiblyEmptyArray): array|\stdClass
     {
         if (!$this->forceEmptyArraysToObjects) {
@@ -55,6 +76,13 @@ class FormsManager implements FormsManagerInterface
         return empty($possiblyEmptyArray) ? new \stdClass() : $possiblyEmptyArray;
     }
 
+    /**
+     * Get form data for JSON encoding.
+     *
+     * @param FormInterface $form
+     *
+     * @return array
+     */
     protected function getForm(FormInterface $form): array
     {
         return [
@@ -71,7 +99,13 @@ class FormsManager implements FormsManagerInterface
         ];
     }
 
-    /** @param array|FormButtonInterface[] $buttons */
+    /**
+     * Get form buttons list for JSON encoding.
+     *
+     * @param array|FormButtonInterface[] $buttons
+     *
+     * @return array
+     */
     protected function getFormButtons(array $buttons): array
     {
         return array_map(fn (FormButtonInterface $button) => [
@@ -83,14 +117,20 @@ class FormsManager implements FormsManagerInterface
     }
 
     /**
+     * Get morm sections list for JSON encoding.
+     *
      * @param array|FormSectionInterface[] $sections
      * @param array|FormFieldInterface[]   $fields
+     *
+     * @return array
      */
     protected function getFormSections(array $sections, array $fields): array
     {
         if (!count($fields)) {
             return [];
         } elseif (!count($sections)) {
+            // For has no sections, wrap all fields into a single unlabeled section.
+
             return [[
                 'id' => $this->idsGenerator->getSectionId(null),
                 'label' => null,
@@ -115,9 +155,17 @@ class FormsManager implements FormsManagerInterface
         })->reject(null)->values()->toArray();
     }
 
+    /**
+     * Get list of fields for the section.
+     *
+     * @param array $fields
+     * @param array $names
+     *
+     * @return array
+     */
     protected function getSectionFields(array $fields, array $names): array
     {
-        // Not using Arr::only() to keep the section's order of the fields.
+        // Not using Arr::only() to keep the section's fields order.
 
         $sectionFields = [];
 
@@ -132,7 +180,13 @@ class FormsManager implements FormsManagerInterface
         return $sectionFields;
     }
 
-    /** @param array|FormFieldInterface[] $fields */
+    /**
+     * Get form fields list for JSON encoding.
+     *
+     * @param array|FormFieldInterface[] $fields
+     *
+     * @return array
+     */
     protected function getFormFields(array $fields): array
     {
         return collect($fields)
@@ -148,6 +202,13 @@ class FormsManager implements FormsManagerInterface
             ->toArray();
     }
 
+    /**
+     * Get form errors list for JSON encoding.
+     *
+     * @param MessageBag|null $errors
+     *
+     * @return array|null
+     */
     protected function getFormErrors(?MessageBag $errors): ?array
     {
         if (is_null($errors)) {

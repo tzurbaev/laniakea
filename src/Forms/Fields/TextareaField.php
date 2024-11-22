@@ -13,6 +13,13 @@ class TextareaField extends AbstractFormField
         return 'TextareaField';
     }
 
+    /**
+     * Set default rows count.
+     *
+     * @param int $rows
+     *
+     * @return $this
+     */
     public function setRows(int $rows): static
     {
         $this->setAttribute('rows', $rows);
@@ -20,6 +27,13 @@ class TextareaField extends AbstractFormField
         return $this;
     }
 
+    /**
+     * Set default columns count.
+     *
+     * @param int $cols
+     *
+     * @return $this
+     */
     public function setCols(int $cols): static
     {
         $this->setAttribute('cols', $cols);

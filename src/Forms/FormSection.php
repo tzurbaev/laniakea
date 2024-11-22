@@ -17,21 +17,41 @@ readonly class FormSection implements FormSectionInterface
         //
     }
 
+    /**
+     * Section ID.
+     *
+     * @return string|null
+     */
     public function getId(): ?string
     {
         return $this->id;
     }
 
+    /**
+     * Section label.
+     *
+     * @return string|null
+     */
     public function getLabel(): ?string
     {
         return $this->label;
     }
 
+    /**
+     * Section description.
+     *
+     * @return string|null
+     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
+    /**
+     * Section fields.
+     *
+     * @return array
+     */
     public function getFieldNames(): array
     {
         return $this->fieldNames;

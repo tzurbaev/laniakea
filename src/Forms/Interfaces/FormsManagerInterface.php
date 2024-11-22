@@ -16,7 +16,7 @@ interface FormsManagerInterface
     public function getFormData(FormInterface $form): array;
 
     /**
-     * Generates JSON string out of the form.
+     * Generates JSON string for the form.
      *
      * @param FormInterface $form
      *

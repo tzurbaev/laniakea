@@ -39,11 +39,23 @@ abstract class AbstractFormField implements FormFieldInterface
         return [];
     }
 
+    /**
+     * Form field ID.
+     *
+     * @return string|null
+     */
     public function getId(): ?string
     {
         return $this->id;
     }
 
+    /**
+     * Set form field ID.
+     *
+     * @param string $id
+     *
+     * @return $this
+     */
     public function setId(string $id): static
     {
         $this->id = $id;
@@ -51,11 +63,23 @@ abstract class AbstractFormField implements FormFieldInterface
         return $this;
     }
 
+    /**
+     * Form field name.
+     *
+     * @return string|null
+     */
     public function getLabel(): ?string
     {
         return $this->label;
     }
 
+    /**
+     * Set form field name.
+     *
+     * @param string $label
+     *
+     * @return $this
+     */
     public function setLabel(string $label): static
     {
         $this->label = $label;
@@ -63,11 +87,23 @@ abstract class AbstractFormField implements FormFieldInterface
         return $this;
     }
 
+    /**
+     * Form field hint.
+     *
+     * @return string|null
+     */
     public function getHint(): ?string
     {
         return $this->hint;
     }
 
+    /**
+     * Set form field hint.
+     *
+     * @param string $hint
+     *
+     * @return $this
+     */
     public function setHint(string $hint): static
     {
         $this->hint = $hint;
@@ -75,6 +111,14 @@ abstract class AbstractFormField implements FormFieldInterface
         return $this;
     }
 
+    /**
+     * Set single setting value.
+     *
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return $this
+     */
     public function setSetting(string $key, mixed $value): static
     {
         Arr::set($this->settings, $key, $value);
@@ -82,6 +126,13 @@ abstract class AbstractFormField implements FormFieldInterface
         return $this;
     }
 
+    /**
+     * Set multiple setting values at once.
+     *
+     * @param array $settings
+     *
+     * @return $this
+     */
     public function setSettings(array $settings): static
     {
         foreach ($settings as $key => $value) {
@@ -91,6 +142,11 @@ abstract class AbstractFormField implements FormFieldInterface
         return $this;
     }
 
+    /**
+     * Get form field settings.
+     *
+     * @return array
+     */
     public function getSettings(): array
     {
         $attributes = $this->getAttributes();
@@ -102,6 +158,11 @@ abstract class AbstractFormField implements FormFieldInterface
         ];
     }
 
+    /**
+     * Get form field attributes.
+     *
+     * @return array
+     */
     public function getAttributes(): array
     {
         return [
@@ -110,6 +171,14 @@ abstract class AbstractFormField implements FormFieldInterface
         ];
     }
 
+    /**
+     * Set single attribute value.
+     *
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return $this
+     */
     public function setAttribute(string $key, mixed $value): static
     {
         $this->attributes[$key] = $value;
@@ -117,6 +186,13 @@ abstract class AbstractFormField implements FormFieldInterface
         return $this;
     }
 
+    /**
+     * Merge attributes with existing ones.
+     *
+     * @param array $attributes
+     *
+     * @return $this
+     */
     public function setAttributes(array $attributes): static
     {
         foreach ($attributes as $key => $value) {
@@ -126,6 +202,13 @@ abstract class AbstractFormField implements FormFieldInterface
         return $this;
     }
 
+    /**
+     * Set readonly attribute to the field.
+     *
+     * @param bool $value
+     *
+     * @return $this
+     */
     public function setReadOnly(bool $value = true): static
     {
         $this->setAttribute('readonly', $value);
@@ -133,11 +216,25 @@ abstract class AbstractFormField implements FormFieldInterface
         return $this;
     }
 
+    /**
+     * Set disabled attribute to the field.
+     *
+     * @param bool $value
+     *
+     * @return $this
+     */
     public function setDisabled(bool $value = true): static
     {
         return $this->setAttribute('disabled', $value);
     }
 
+    /**
+     * Set required attribute to the field.
+     *
+     * @param bool $required
+     *
+     * @return $this
+     */
     public function setRequired(bool $required = true): static
     {
         return $this->setAttribute('required', $required);

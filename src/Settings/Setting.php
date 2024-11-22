@@ -17,16 +17,31 @@ readonly class Setting implements SettingInterface
         //
     }
 
+    /**
+     * Get setting name.
+     *
+     * @return string|int
+     */
     public function getName(): string|int
     {
         return $this->name->value;
     }
 
+    /**
+     * Get original setting attribute.
+     *
+     * @return SettingAttributeInterface
+     */
     public function getSettingAttribute(): SettingAttributeInterface
     {
         return $this->settingAttribute;
     }
 
+    /**
+     * Get request path for current setting.
+     *
+     * @return string|null
+     */
     public function getRequestPath(): ?string
     {
         return $this->requestPath;

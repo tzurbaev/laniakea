@@ -17,6 +17,13 @@ readonly class SettingsValues implements SettingsValuesInterface
         //
     }
 
+    /**
+     * Get default values for given settings enum.
+     *
+     * @param string $enum
+     *
+     * @return array
+     */
     public function getDefaults(string $enum): array
     {
         $values = [];
@@ -29,11 +36,27 @@ readonly class SettingsValues implements SettingsValuesInterface
         return $values;
     }
 
+    /**
+     * Generate settings list for create.
+     *
+     * @param string     $enum
+     * @param array|null $settings
+     *
+     * @return array
+     */
     public function getSettingsForCreate(string $enum, ?array $settings): array
     {
         return $this->toPersisted($enum, $settings ?? []);
     }
 
+    /**
+     * Generate settings values for update.
+     *
+     * @param HasSettingsInterface $model
+     * @param array|null           $settings
+     *
+     * @return array
+     */
     public function getSettingsForUpdate(HasSettingsInterface $model, ?array $settings): array
     {
         $persisted = $this->toPersisted(
@@ -44,6 +67,15 @@ readonly class SettingsValues implements SettingsValuesInterface
         return array_merge($model->getCurrentSettings() ?? [], $persisted);
     }
 
+    /**
+     * Prepare given payload for persisted storage.
+     *
+     * @param string $enum
+     * @param array  $payload
+     * @param bool   $ignoreRequestPaths
+     *
+     * @return array
+     */
     public function toPersisted(string $enum, array $payload, bool $ignoreRequestPaths = false): array
     {
         $settings = $this->generator->getSettings($enum);
@@ -71,6 +103,14 @@ readonly class SettingsValues implements SettingsValuesInterface
         return $values;
     }
 
+    /**
+     * Generate values from persisted value.
+     *
+     * @param string $enum
+     * @param array  $persisted
+     *
+     * @return array
+     */
     public function fromPersisted(string $enum, array $persisted): array
     {
         $settings = $this->generator->getSettings($enum);
@@ -83,13 +123,25 @@ readonly class SettingsValues implements SettingsValuesInterface
 
             $values = array_merge(
                 $values,
-                $setting->getSettingAttribute()->fromPersisted($setting->getName(), $persisted[$setting->getName()], $persisted),
+                $setting->getSettingAttribute()->fromPersisted(
+                    $setting->getName(),
+                    $persisted[$setting->getName()],
+                    $persisted,
+                ),
             );
         }
 
         return $values;
     }
 
+    /**
+     * Get payload key for given setting either from request path or setting name.
+     *
+     * @param SettingInterface $setting
+     * @param bool             $ignoreRequestPaths
+     *
+     * @return string
+     */
     protected function getPayloadKey(SettingInterface $setting, bool $ignoreRequestPaths): string
     {
         if ($ignoreRequestPaths || is_null($setting->getRequestPath())) {

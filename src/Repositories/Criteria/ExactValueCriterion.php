@@ -9,11 +9,20 @@ use Laniakea\Repositories\Interfaces\RepositoryCriterionInterface;
 
 readonly class ExactValueCriterion implements RepositoryCriterionInterface
 {
+    /**
+     * @param string           $column
+     * @param array|mixed|null $value
+     */
     public function __construct(private string $column, private mixed $value)
     {
         //
     }
 
+    /**
+     * This will apply either whereNull, whereIn, or where depending on the value.
+     *
+     * @param Builder $query
+     */
     public function apply(Builder $query): void
     {
         if (is_null($this->value)) {

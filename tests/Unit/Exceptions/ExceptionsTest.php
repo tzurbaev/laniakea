@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use Laniakea\Exceptions\BaseHttpException;
 use Laniakea\Exceptions\ValidationException;
+use Laniakea\Exceptions\Wrappers\WrappedAccessDeniedHttpException;
+use Laniakea\Exceptions\Wrappers\WrappedAuthenticationException;
 use Laniakea\Tests\Workbench\Exceptions\FakeRenderableException;
 use Laniakea\Tests\Workbench\Exceptions\FakeTranslatableException;
 
@@ -63,20 +65,36 @@ it('should render validation exception with wrapper exception', function () {
         ]);
 });
 
+it('should render Laravel/Symfony exceptions with wrappers', function (string $route, string $message, string $exception) {
+    $this->getJson(route('testing.exceptions.'.$route))
+        ->assertStatus($exception::HTTP_CODE)
+        ->assertExactJson([
+            'error' => [
+                'message' => $message,
+                'original_message' => $message,
+                'code' => $exception::ERROR_CODE,
+                'meta' => [],
+            ],
+        ]);
+})->with([
+    ['route' => 'authentication', 'message' => 'Unauthenticated', 'exception' => WrappedAuthenticationException::class],
+    ['route' => 'accessDenied', 'message' => 'Access denied', 'exception' => WrappedAccessDeniedHttpException::class],
+]);
+
 it('should render exception view for non-JSON requests', function () {
     $this->get(route('testing.exceptions.renderable.view'))
         ->assertStatus(FakeRenderableException::HTTP_CODE)
-        ->assertSee('Rendered view')
-        ->assertSee('Message: '.FakeRenderableException::MESSAGE)
-        ->assertSee('Code: '.FakeRenderableException::ERROR_CODE);
+        ->assertSee('Rendered with exception renderer')
+        ->assertSee('Message (exception): '.FakeRenderableException::MESSAGE)
+        ->assertSee('Code (exception): '.FakeRenderableException::ERROR_CODE);
 });
 
 it('should not render exception view for JSON requests', function () {
     $this->getJson(route('testing.exceptions.renderable.view'))
         ->assertStatus(FakeRenderableException::HTTP_CODE)
-        ->assertDontSee('Rendered view')
-        ->assertDontSee('Message: '.FakeRenderableException::MESSAGE)
-        ->assertDontSee('Code: '.FakeRenderableException::ERROR_CODE)
+        ->assertDontSee('Rendered with exception renderer')
+        ->assertDontSee('Message (exception): '.FakeRenderableException::MESSAGE)
+        ->assertDontSee('Code (exception): '.FakeRenderableException::ERROR_CODE)
         ->assertExactJson([
             'error' => [
                 'message' => FakeRenderableException::MESSAGE,
@@ -85,4 +103,12 @@ it('should not render exception view for JSON requests', function () {
                 'meta' => [],
             ],
         ]);
+});
+
+it('should render exception views for non-JSON requests via custom renderer', function () {
+    $this->get(route('testing.exceptions.renderable.custom'))
+        ->assertStatus(BaseHttpException::HTTP_CODE)
+        ->assertSee('Rendered with custom renderer')
+        ->assertSee('Message (custom): '.BaseHttpException::MESSAGE)
+        ->assertSee('Code (custom): '.BaseHttpException::ERROR_CODE);
 });

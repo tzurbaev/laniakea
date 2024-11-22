@@ -1,3 +1,3 @@
-Rendered view
-Message: {{ $e->getErrorMessage() }}
-Code: {{ $e->getErrorCode() }}
+Rendered with exception renderer
+Message (exception): {{ $e->getErrorMessage() }}
+Code (exception): {{ $e->getErrorCode() }}

@@ -12,13 +12,11 @@ use Laniakea\Settings\Interfaces\SettingsGeneratorInterface;
 readonly class SettingsGenerator implements SettingsGeneratorInterface
 {
     /**
-     * Generates settings list for a given enum class.
+     * Generate settings list for given enum.
      *
      * @param string $enum
      *
-     * @throws \ReflectionException
-     *
-     * @return array<int, SettingInterface>
+     * @return array|SettingInterface[]
      */
     public function getSettings(string $enum): array
     {
@@ -34,6 +32,13 @@ readonly class SettingsGenerator implements SettingsGeneratorInterface
         );
     }
 
+    /**
+     * Get setting instance from the given constant.
+     *
+     * @param \ReflectionClassConstant $constant
+     *
+     * @return SettingInterface|null
+     */
     protected function getSetting(\ReflectionClassConstant $constant): ?SettingInterface
     {
         $value = $constant->getValue();
@@ -53,6 +58,14 @@ readonly class SettingsGenerator implements SettingsGeneratorInterface
         return new Setting($value, $settingAttribute, $requestPathAttribute?->getPath());
     }
 
+    /**
+     * Get attribute instance for the given constant.
+     *
+     * @param \ReflectionClassConstant $constant
+     * @param string                   $class
+     *
+     * @return SettingAttributeInterface|RequestPathAttributeInterface|null
+     */
     protected function getAttributeInstance(\ReflectionClassConstant $constant, string $class): SettingAttributeInterface|RequestPathAttributeInterface|null
     {
         $attributes = $constant->getAttributes($class, \ReflectionAttribute::IS_INSTANCEOF);

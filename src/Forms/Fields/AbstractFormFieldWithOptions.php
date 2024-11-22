@@ -15,6 +15,11 @@ abstract class AbstractFormFieldWithOptions extends AbstractFormField
         $this->setOptions($options);
     }
 
+    /**
+     * Get default form field settings.
+     *
+     * @return array[]
+     */
     protected function getDefaultSettings(): array
     {
         return [
@@ -22,6 +27,13 @@ abstract class AbstractFormFieldWithOptions extends AbstractFormField
         ];
     }
 
+    /**
+     * Set available options list.
+     *
+     * @param array $options
+     *
+     * @return $this
+     */
     public function setOptions(array $options): static
     {
         $this->setSetting('options', $options);

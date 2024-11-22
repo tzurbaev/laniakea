@@ -19,11 +19,21 @@ abstract class AbstractResourceContainer implements ResourceContainerInterface
     protected string $repository;
     protected string $transformer;
 
+    /**
+     * Get resource instance.
+     *
+     * @return ResourceInterface
+     */
     public function getResource(): ResourceInterface
     {
         return $this->resourceInstance = $this->getInstance($this->resourceInstance, $this->resource);
     }
 
+    /**
+     * Get respository instance.
+     *
+     * @return RepositoryInterface
+     */
     public function getRepository(): RepositoryInterface
     {
         return $this->repositoryInstance = $this->getInstance($this->repositoryInstance, $this->repository);
@@ -39,7 +49,17 @@ abstract class AbstractResourceContainer implements ResourceContainerInterface
         return $this->transformerInstance = $this->getInstance($this->transformerInstance, $this->transformer);
     }
 
-    protected function getInstance(mixed $currentInstance, string $className)
+    /**
+     * Get either the current instance or create a new one.
+     *
+     * @param mixed  $currentInstance
+     * @param string $className
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     *
+     * @return \Closure|mixed|object|null
+     */
+    protected function getInstance(mixed $currentInstance, string $className): mixed
     {
         if (!is_null($currentInstance)) {
             return $currentInstance;

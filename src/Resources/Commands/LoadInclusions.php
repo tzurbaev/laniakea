@@ -44,12 +44,22 @@ readonly class LoadInclusions implements ResourceManagerCommandInterface
         });
     }
 
+    /**
+     * Merges requested inclusions with resource's global and default inclusions.
+     *
+     * @param ResourceRequestInterface $request
+     * @param ResourceInterface        $resource
+     *
+     * @return array
+     */
     protected function getRequestedInclusions(ResourceRequestInterface $request, ResourceInterface $resource): array
     {
         $global = $resource instanceof HasGlobalInclusionsInterface ? $resource->getGlobalInclusions() : [];
         $inclusions = $request->getInclusions();
 
         if (!count($inclusions)) {
+            // Default inclusions will be used only if there are no requested inclusions.
+
             $inclusions = $resource instanceof HasDefaultInclusionsInterface ? $resource->getDefaultInclusions() : [];
         }
 

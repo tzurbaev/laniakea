@@ -65,7 +65,7 @@ interface FormInterface
     public function getValues(): array;
 
     /**
-     * Validation errors.
+     * Validation errors for the current request.
      *
      * @return MessageBag|null
      */

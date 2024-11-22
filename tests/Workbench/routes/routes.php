@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Route;
 use Laniakea\Exceptions\BaseHttpException;
 use Laniakea\Resources\Middleware\SetResourceRequest;
@@ -10,6 +11,7 @@ use Laniakea\Tests\Workbench\Exceptions\FakeTranslatableException;
 use Laniakea\Tests\Workbench\Exceptions\FakeValidationExceptionRequest;
 use Laniakea\Tests\Workbench\Http\Controllers\ArticlesApiController;
 use Laniakea\Versions\Middleware\SetApiVersion;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 Route::group(['prefix' => '/__testing', 'as' => 'testing.', 'middleware' => []], function () {
     Route::group(['prefix' => '/exceptions', 'as' => 'exceptions.'], function () {
@@ -18,6 +20,9 @@ Route::group(['prefix' => '/__testing', 'as' => 'testing.', 'middleware' => []],
         Route::get('/translated', fn () => throw new FakeTranslatableException())->name('translated');
         Route::post('/validation', fn (FakeValidationExceptionRequest $request) => response()->json(['message' => $request->input('message')]))->name('validation');
         Route::get('/renderable/view', fn () => throw new FakeRenderableException())->name('renderable.view');
+        Route::get('/renderable/custom', fn () => throw new BaseHttpException())->name('renderable.custom');
+        Route::get('/authentication', fn () => throw new AuthenticationException('Unauthenticated'))->name('authentication');
+        Route::get('/access-denied', fn () => throw new AccessDeniedHttpException('Access denied'))->name('accessDenied');
     });
 
     Route::group(['middleware' => SetResourceRequest::class], function () {

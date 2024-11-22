@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Laniakea\Tests\Workbench\Factories\ArticleFactory;
 use Laniakea\Tests\Workbench\Models\Article;
 use Laniakea\Tests\Workbench\Repositories\ArticlesRepository;
 
@@ -58,7 +59,39 @@ it('should update models', function () {
         ->and($freshArticle->content)->toBe('Updated Article Body');
 });
 
-it('should throw ModelNotFound exception while trying to update non-existed models', function () {
+it('should use model instances in update method', function () {
+    $repository = new ArticlesRepository();
+    $article = $repository->create(['title' => 'Test Article', 'content' => 'Test Article Body']);
+    expect($article->title)->toBe('Test Article')
+        ->and($article->content)->toBe('Test Article Body');
+
+    $updatedArticle = $repository->update($article, ['title' => 'Updated Article', 'content' => 'Updated Article Body']);
+    expect($updatedArticle->title)->toBe('Updated Article')
+        ->and($updatedArticle->content)->toBe('Updated Article Body');
+
+    $freshArticle = $repository->find($article->id);
+
+    expect($freshArticle->title)->toBe('Updated Article')
+        ->and($freshArticle->content)->toBe('Updated Article Body');
+});
+
+it('should not reload model from DB when instance of model was provided to update method', function () {
+    /** @var Article $article */
+    $article = ArticleFactory::new()->create();
+    $repository = Mockery::mock(ArticlesRepository::class.'[findOrFail]');
+    $repository->shouldNotHaveReceived('findOrFail');
+
+    $updatedArticle = $repository->update($article, ['title' => 'Updated Article', 'content' => 'Updated Article Body']);
+    expect($updatedArticle->title)->toBe('Updated Article')
+        ->and($updatedArticle->content)->toBe('Updated Article Body');
+
+    $article->refresh();
+
+    expect($article->title)->toBe('Updated Article')
+        ->and($article->content)->toBe('Updated Article Body');
+});
+
+it('should throw ModelNotFound exception while trying to update non-existed models by ID', function () {
     $repository = new ArticlesRepository();
     $repository->update(-1, ['title' => 'Updated Article', 'content' => 'Updated Article Body']);
 })->throws(ModelNotFoundException::class);
@@ -72,7 +105,27 @@ it('should delete models', function () {
     expect($repository->find($article->id))->toBe(null);
 });
 
-it('should throw ModelNotFound exception while trying to delete non-existed models', function () {
+it('should use model instances in delete method', function () {
+    $repository = new ArticlesRepository();
+    $article = $repository->create(['title' => 'Test Article', 'content' => 'Test Article Body']);
+
+    $repository->delete($article);
+
+    expect($repository->find($article->id))->toBe(null);
+});
+
+it('should not reload model from DB when instance of model was provided to delete method', function () {
+    /** @var Article $article */
+    $article = ArticleFactory::new()->create();
+    $repository = Mockery::mock(ArticlesRepository::class.'[findOrFail]');
+    $repository->shouldNotHaveReceived('findOrFail');
+
+    $repository->delete($article);
+
+    expect($article->fresh())->toBeNull();
+});
+
+it('should throw ModelNotFound exception while trying to delete non-existed models by ID', function () {
     $repository = new ArticlesRepository();
     $repository->delete(1);
 })->throws(ModelNotFoundException::class);

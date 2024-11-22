@@ -26,17 +26,16 @@ readonly class FilterResources implements ResourceManagerCommandInterface
     public function run(RepositoryQueryBuilderInterface $query, ResourceContextInterface $context): void
     {
         $query->beforeCriteria(function () use ($query, $context) {
+            // Only requested filters and filters with default values will be applied.
             $values = $this->getFilterValues(
                 $context->getRequest(),
                 $context->getResource(),
             );
 
-            $filters = collect(
-                Arr::only(
-                    $context->getResource()->getFilters(),
-                    array_keys($values)
-                )
-            );
+            $filters = collect(Arr::only(
+                $context->getResource()->getFilters(),
+                array_keys($values)
+            ));
 
             $container = Container::getInstance();
 
@@ -52,6 +51,14 @@ readonly class FilterResources implements ResourceManagerCommandInterface
         });
     }
 
+    /**
+     * Get requested and default filter values for the resource.
+     *
+     * @param ResourceRequestInterface $request
+     * @param ResourceInterface        $resource
+     *
+     * @return array
+     */
     protected function getFilterValues(ResourceRequestInterface $request, ResourceInterface $resource): array
     {
         $availableFilters = $resource->getFilters();

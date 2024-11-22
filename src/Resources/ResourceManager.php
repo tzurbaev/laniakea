@@ -6,6 +6,7 @@ namespace Laniakea\Resources;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Laniakea\Repositories\Criteria\ExactValueCriterion;
 use Laniakea\Repositories\Interfaces\RepositoryInterface;
@@ -24,6 +25,17 @@ readonly class ResourceManager implements ResourceManagerInterface
         //
     }
 
+    /**
+     * Get paginator for the given resource.
+     *
+     * @param ResourceRequestInterface $request
+     * @param ResourceInterface        $resource
+     * @param RepositoryInterface      $repository
+     * @param callable|null            $callback
+     * @param array                    $context
+     *
+     * @return LengthAwarePaginator
+     */
     public function getPaginator(
         ResourceRequestInterface $request,
         ResourceInterface $resource,
@@ -42,6 +54,17 @@ readonly class ResourceManager implements ResourceManagerInterface
         );
     }
 
+    /**
+     * Get collection for the given resource.
+     *
+     * @param ResourceRequestInterface $request
+     * @param ResourceInterface        $resource
+     * @param RepositoryInterface      $repository
+     * @param callable|null            $callback
+     * @param array                    $context
+     *
+     * @return Collection
+     */
     public function getList(
         ResourceRequestInterface $request,
         ResourceInterface $resource,
@@ -58,6 +81,19 @@ readonly class ResourceManager implements ResourceManagerInterface
         );
     }
 
+    /**
+     * Find single item by ID.
+     *
+     * @param mixed                    $id
+     * @param ResourceRequestInterface $request
+     * @param ResourceInterface        $resource
+     * @param RepositoryInterface      $repository
+     * @param array                    $context
+     *
+     * @throws ModelNotFoundException
+     *
+     * @return Model
+     */
     public function getItem(
         mixed $id,
         ResourceRequestInterface $request,
@@ -65,6 +101,7 @@ readonly class ResourceManager implements ResourceManagerInterface
         RepositoryInterface $repository,
         array $context = [],
     ): Model {
+        // If resource provides custom item criterion, it will be used instead of default one.
         $criterion = $resource instanceof HasItemCriterionInterface
             ? $resource->getItemCriterion($id)
             : new ExactValueCriterion('id', $id);

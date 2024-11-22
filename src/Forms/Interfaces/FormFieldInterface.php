@@ -72,7 +72,7 @@ interface FormFieldInterface
     public function setSetting(string $key, mixed $value): static;
 
     /**
-     * Merge settings with existing ones.
+     * Set multiple setting values at once.
      *
      * @param array $settings
      *

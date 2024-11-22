@@ -47,7 +47,11 @@ readonly class ResourceManagerCommands
         return $this->getCommands($this->item);
     }
 
-    /** @return ResourceManagerCommandInterface[] */
+    /**
+     * Resolve instances of the commands.
+     *
+     * @return ResourceManagerCommandInterface[]
+     */
     protected function getCommands(array $commands): array
     {
         $container = Container::getInstance();

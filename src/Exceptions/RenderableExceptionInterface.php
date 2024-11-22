@@ -10,7 +10,7 @@ use Illuminate\View\View;
 interface RenderableExceptionInterface
 {
     /**
-     * Get the view instance for the exception.
+     * Get the view instance for the current exception.
      *
      * @param Request $request
      *

@@ -14,7 +14,7 @@ class ValidationException extends BaseHttpException
 
     public function __construct(private readonly BaseValidationException $validationException)
     {
-        parent::__construct(static::MESSAGE, static::HTTP_CODE);
+        parent::__construct(static::MESSAGE, static::HTTP_CODE, $this->validationException);
 
         $this->addMeta(['errors' => $this->validationException->errors()]);
     }
@@ -29,6 +29,11 @@ class ValidationException extends BaseHttpException
         return $this->validationException;
     }
 
+    /**
+     * Get the error message for the first failed field.
+     *
+     * @return string|null
+     */
     public function getTranslatedErrorMessage(): ?string
     {
         $errors = $this->validationException->errors();

@@ -21,10 +21,10 @@ interface RepositoryInterface
     public function create(array $attributes): Model;
 
     /**
-     * Update existed model by ID.
+     * Update either provided model instance or existed model by ID.
      *
-     * @param mixed $id
-     * @param array $attributes
+     * @param Model|mixed $id
+     * @param array       $attributes
      *
      * @throws ModelNotFoundException
      *
@@ -33,9 +33,9 @@ interface RepositoryInterface
     public function update(mixed $id, array $attributes): Model;
 
     /**
-     * Delete existed model by ID.
+     * Delete either provided model instance or existed model by ID.
      *
-     * @param mixed $id
+     * @param Model|mixed $id
      *
      * @throws ModelNotFoundException
      */
