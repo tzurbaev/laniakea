@@ -10,6 +10,13 @@ use Laniakea\Transformers\Entities\TransformerInclusion;
 class InclusionsParser
 {
     /**
+     * Previously parsed inclusions for quick access.
+     *
+     * @var array
+     */
+    protected array $inclusionsCache = [];
+
+    /**
      * Parse transformer inclusions.
      *
      * @param mixed $transformer
@@ -18,30 +25,38 @@ class InclusionsParser
      */
     public function getTransformerInclusions(mixed $transformer): array
     {
+        $transformerClass = is_string($transformer) ? $transformer : get_class($transformer);
+
+        if (array_key_exists($transformerClass, $this->inclusionsCache)) {
+            return $this->inclusionsCache[$transformerClass];
+        }
+
         $methods = (new \ReflectionClass($transformer))->getMethods(\ReflectionMethod::IS_PUBLIC);
 
         if (!count($methods)) {
-            return [];
+            return $this->inclusionsCache[$transformerClass] = [];
         }
 
-        $inclusions = array_map(function (\ReflectionMethod $method) {
+        $inclusions = [];
+
+        foreach ($methods as $method) {
             $attributes = $method->getAttributes(Inclusion::class, \ReflectionAttribute::IS_INSTANCEOF);
 
             if (!count($attributes)) {
-                return null;
+                continue;
             }
 
             /** @var Inclusion $inclusion */
             $inclusion = $attributes[0]->newInstance();
 
-            return new TransformerInclusion(
+            $inclusions[] = new TransformerInclusion(
                 name: $inclusion->getName(),
                 default: $inclusion->isDefault(),
                 method: $method->getName(),
             );
-        }, $methods);
+        }
 
-        return array_values(array_filter($inclusions));
+        return $this->inclusionsCache[$transformerClass] = $inclusions;
     }
 
     /**

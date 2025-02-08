@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Laniakea\Tests\Workbench\Entities\Book;
 use Laniakea\Tests\Workbench\Entities\BookAuthor;
 use Laniakea\Tests\Workbench\Transformers\BookTransformer;
+use Laniakea\Tests\Workbench\Transformers\BookTransformerWithDefaultAuthorInclusion;
 use Laniakea\Transformers\Resources\CollectionResource;
 use Laniakea\Transformers\Resources\ItemResource;
 use Laniakea\Transformers\TransformationManager;
@@ -120,4 +121,18 @@ it('should control max depth', function () {
     $manager->parseInclusions($inclusions)
         ->getTransformation(new ItemResource($book, new BookTransformer()))
         ->toArray();
+});
+
+it('should include default inclusions', function () {
+    $book = new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien'));
+    $manager = new TransformationManager();
+    $transformed = $manager->getTransformation(new ItemResource($book, new BookTransformerWithDefaultAuthorInclusion()))->toArray();
+
+    expect($transformed)->toBe([
+        'title' => $book->title,
+        'isbn' => $book->isbn,
+        'author' => [
+            'name' => $book->author->name,
+        ],
+    ]);
 });

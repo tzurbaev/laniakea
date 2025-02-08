@@ -29,7 +29,7 @@ readonly class TransformationPayload
     {
         return new static(
             maxDepth: $this->maxDepth,
-            inclusions: $this->inclusions[$inclusion->getName()],
+            inclusions: $this->inclusions[$inclusion->getName()] ?? [],
             inclusionsParser: $this->inclusionsParser,
             serializer: $this->serializer,
         );

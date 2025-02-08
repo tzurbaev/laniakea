@@ -14,13 +14,6 @@ use Laniakea\Transformers\Resources\PrimitiveResource;
 
 class Transformation implements TransformationInterface
 {
-    /**
-     * Previously parsed inclusions for quick access.
-     *
-     * @var array
-     */
-    private array $inclusionsCache = [];
-
     public function __construct(
         protected TransformerResourceInterface $resource,
         protected TransformationPayload $payload,
@@ -136,9 +129,9 @@ class Transformation implements TransformationInterface
 
         if (!is_array($data)) {
             throw new \RuntimeException('Transformer must return an array.');
-        } elseif (count($this->payload->inclusions) > 0) {
-            $data = $this->insertInclusions($item, $data, $transformer);
         }
+
+        $data = $this->insertInclusions($item, $data, $transformer);
 
         if (is_null($this->payload->serializer)) {
             return $data;
@@ -160,14 +153,14 @@ class Transformation implements TransformationInterface
      */
     protected function insertInclusions(mixed $item, array $data, mixed $transformer): array
     {
-        $availableInclusions = $this->getInclusions($this->payload->inclusionsParser, $transformer);
+        $availableInclusions = $this->payload->inclusionsParser->getTransformerInclusions($transformer);
 
         if (!count($availableInclusions)) {
             return $data;
         }
 
         foreach ($availableInclusions as $inclusion) {
-            if (!array_key_exists($inclusion->getName(), $this->payload->inclusions)) {
+            if (!$inclusion->isDefault() && !array_key_exists($inclusion->getName(), $this->payload->inclusions)) {
                 continue;
             }
 
@@ -204,24 +197,5 @@ class Transformation implements TransformationInterface
             payload: $this->payload->getNestedPayload($inclusion),
             depth: $this->depth + 1,
         );
-    }
-
-    /**
-     * Get the inclusions for the transformer.
-     *
-     * @param InclusionsParser $parser
-     * @param mixed            $transformer
-     *
-     * @return array
-     */
-    protected function getInclusions(InclusionsParser $parser, mixed $transformer): array
-    {
-        $class = get_class($transformer);
-
-        if (isset($this->inclusionsCache[$class])) {
-            return $this->inclusionsCache[$class];
-        }
-
-        return $this->inclusionsCache[$class] = $parser->getTransformerInclusions($transformer);
     }
 }
