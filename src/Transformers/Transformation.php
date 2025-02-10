@@ -49,14 +49,17 @@ class Transformation implements TransformationInterface
      */
     protected function getTransformedData(): array
     {
+        $inclusions = $this->getRequestedInclusions();
+
         if ($this->resource instanceof ItemResource) {
             return $this->getItem(
                 $this->resource->getData(),
                 $this->resource->getTransformer(),
                 isRoot: $this->depth === 0,
+                requestedInclusions: $inclusions,
             );
         } elseif ($this->resource instanceof CollectionResource) {
-            return $this->getCollection($this->resource);
+            return $this->getCollection($this->resource, $inclusions);
         }
 
         throw new \RuntimeException('Resource type ['.get_class($this->resource).'] is not supported.');
@@ -91,18 +94,18 @@ class Transformation implements TransformationInterface
      * Get the transformed collection.
      *
      * @param CollectionResource $resource
+     * @param array              $inclusions
      *
      * @return array
      */
-    protected function getCollection(CollectionResource $resource): array
+    protected function getCollection(CollectionResource $resource, array $inclusions): array
     {
-        $collection = $resource->getData();
         $transformer = $resource->getTransformer();
 
         $data = [];
 
-        foreach ($collection as $item) {
-            $data[] = $this->getItem($item, $transformer, isRoot: false);
+        foreach ($resource->getData() as $item) {
+            $data[] = $this->getItem($item, $transformer, isRoot: false, requestedInclusions: $inclusions);
         }
 
         if (is_null($this->payload->serializer)) {
@@ -120,10 +123,11 @@ class Transformation implements TransformationInterface
      * @param mixed $item
      * @param mixed $transformer
      * @param bool  $isRoot
+     * @param array $requestedInclusions
      *
      * @return array
      */
-    protected function getItem(mixed $item, mixed $transformer, bool $isRoot): array
+    protected function getItem(mixed $item, mixed $transformer, bool $isRoot, array $requestedInclusions): array
     {
         $data = call_user_func_array([$transformer, 'transform'], [$item]);
 
@@ -131,39 +135,7 @@ class Transformation implements TransformationInterface
             throw new \RuntimeException('Transformer must return an array.');
         }
 
-        $data = $this->insertInclusions($item, $data, $transformer);
-
-        if (is_null($this->payload->serializer)) {
-            return $data;
-        } elseif ($isRoot) {
-            return $this->payload->serializer->getRootItem($data);
-        }
-
-        return $this->payload->serializer->getNestedItem($data);
-    }
-
-    /**
-     * Add requested inclusions to the data.
-     *
-     * @param mixed $item
-     * @param array $data
-     * @param mixed $transformer
-     *
-     * @return array
-     */
-    protected function insertInclusions(mixed $item, array $data, mixed $transformer): array
-    {
-        $availableInclusions = $this->payload->inclusionsParser->getTransformerInclusions($transformer);
-
-        if (!count($availableInclusions)) {
-            return $data;
-        }
-
-        foreach ($availableInclusions as $inclusion) {
-            if (!$inclusion->isDefault() && !array_key_exists($inclusion->getName(), $this->payload->inclusions)) {
-                continue;
-            }
-
+        foreach ($requestedInclusions as $inclusion) {
             $inclusionResource = call_user_func_array([$transformer, $inclusion->getMethod()], [$item]);
 
             if (is_null($inclusionResource)) {
@@ -177,7 +149,37 @@ class Transformation implements TransformationInterface
             $data[$inclusion->getName()] = $this->getNestedTransformation($inclusion, $inclusionResource)->toArray();
         }
 
-        return $data;
+        if (is_null($this->payload->serializer)) {
+            return $data;
+        } elseif ($isRoot) {
+            return $this->payload->serializer->getRootItem($data);
+        }
+
+        return $this->payload->serializer->getNestedItem($data);
+    }
+
+    /**
+     * Extract default and requested inclusions.
+     *
+     * @return array
+     */
+    protected function getRequestedInclusions(): array
+    {
+        $available = $this->payload->inclusionsParser->getTransformerInclusions($this->resource->getTransformer());
+
+        if (!count($available)) {
+            return [];
+        }
+
+        $inclusions = [];
+
+        foreach ($available as $inclusion) {
+            if ($inclusion->isDefault() || array_key_exists($inclusion->getName(), $this->payload->inclusions)) {
+                $inclusions[] = $inclusion;
+            }
+        }
+
+        return $inclusions;
     }
 
     /**
