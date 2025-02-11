@@ -83,9 +83,7 @@ class Transformation implements TransformationInterface
             return $data;
         }
 
-        $paginator = $this->payload->serializer->getPagination($resource->getPaginator());
-
-        $data['meta'] = $paginator;
+        $data['meta'] = $this->payload->serializer->getPagination($resource->getPaginator());
 
         return $data;
     }
@@ -129,14 +127,15 @@ class Transformation implements TransformationInterface
      */
     protected function getItem(mixed $item, mixed $transformer, bool $isRoot, array $requestedInclusions): array
     {
-        $data = call_user_func_array([$transformer, 'transform'], [$item]);
+        $data = $transformer->transform($item);
 
         if (!is_array($data)) {
             throw new \RuntimeException('Transformer must return an array.');
         }
 
         foreach ($requestedInclusions as $inclusion) {
-            $inclusionResource = call_user_func_array([$transformer, $inclusion->getMethod()], [$item]);
+            $method = $inclusion->getMethod();
+            $inclusionResource = $transformer->$method($item);
 
             if (is_null($inclusionResource)) {
                 continue;
