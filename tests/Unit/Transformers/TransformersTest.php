@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 use Laniakea\Tests\Workbench\Entities\Book;
 use Laniakea\Tests\Workbench\Entities\BookAuthor;
+use Laniakea\Tests\Workbench\Entities\NestedTransformationEntity;
 use Laniakea\Tests\Workbench\Transformers\BookTransformer;
 use Laniakea\Tests\Workbench\Transformers\BookTransformerWithDefaultAuthorInclusion;
+use Laniakea\Tests\Workbench\Transformers\Nested\FirstNestedTransformer;
 use Laniakea\Transformers\Resources\CollectionResource;
 use Laniakea\Transformers\Resources\ItemResource;
 use Laniakea\Transformers\TransformationManager;
@@ -133,6 +135,43 @@ it('should include default inclusions', function () {
         'isbn' => $book->isbn,
         'author' => [
             'name' => $book->author->name,
+        ],
+    ]);
+});
+
+it('should omit default inclusions via exclusions', function () {
+    $book = new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien'));
+    $manager = new TransformationManager();
+    $transformed = $manager->parseExclusions(['author'])
+        ->getTransformation(new ItemResource($book, new BookTransformerWithDefaultAuthorInclusion()))
+        ->toArray();
+
+    expect($transformed)->toBe([
+        'title' => $book->title,
+        'isbn' => $book->isbn,
+    ]);
+});
+
+it('should omit only the last inclusion in chain via exclusions', function () {
+    $entity = new NestedTransformationEntity(
+        'First',
+        new NestedTransformationEntity(
+            'Second',
+            new NestedTransformationEntity('Third')
+        ),
+    );
+
+    $manager = new TransformationManager();
+    $transformed = $manager->parseExclusions(['next.next'])
+        ->getTransformation(new ItemResource($entity, new FirstNestedTransformer()))
+        ->toArray();
+
+    expect($transformed)->toBe([
+        'level' => 1,
+        'name' => 'First',
+        'next' => [
+            'level' => 2,
+            'name' => 'Second',
         ],
     ]);
 });

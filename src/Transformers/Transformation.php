@@ -173,9 +173,15 @@ class Transformation implements TransformationInterface
         $inclusions = [];
 
         foreach ($available as $inclusion) {
-            if ($inclusion->isDefault() || array_key_exists($inclusion->getName(), $this->payload->inclusions)) {
-                $inclusions[] = $inclusion;
+            if (!isset($this->payload->inclusions[$inclusion->getName()]) && !$inclusion->isDefault()) {
+                // Inclusion was not requested and it is not a default one.
+                continue;
+            } elseif (($this->payload->exclusions[$inclusion->getName()] ?? null) === []) {
+                // Default inclusion was excluded and it has no nested inclusions.
+                continue;
             }
+
+            $inclusions[] = $inclusion;
         }
 
         return $inclusions;

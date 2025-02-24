@@ -12,6 +12,7 @@ readonly class TransformationPayload
     public function __construct(
         public int $maxDepth,
         public array $inclusions,
+        public array $exclusions,
         public InclusionsParser $inclusionsParser,
         public ?TransformationSerializerInterface $serializer = null,
     ) {
@@ -30,6 +31,7 @@ readonly class TransformationPayload
         return new static(
             maxDepth: $this->maxDepth,
             inclusions: $this->inclusions[$inclusion->getName()] ?? [],
+            exclusions: $this->exclusions[$inclusion->getName()] ?? [],
             inclusionsParser: $this->inclusionsParser,
             serializer: $this->serializer,
         );

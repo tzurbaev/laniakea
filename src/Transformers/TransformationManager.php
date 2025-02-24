@@ -13,6 +13,7 @@ class TransformationManager
 {
     protected int $maxDepth = 10;
     protected array $inclusions = [];
+    protected array $exclusions = [];
     protected ?TransformationSerializerInterface $serializer = null;
 
     /**
@@ -58,6 +59,20 @@ class TransformationManager
     }
 
     /**
+     * Set requested exclusions.
+     *
+     * @param array $exclusions
+     *
+     * @return static
+     */
+    public function parseExclusions(array $exclusions): static
+    {
+        $this->exclusions = $exclusions;
+
+        return $this;
+    }
+
+    /**
      * Get initial resource transformation.
      *
      * @param TransformerResourceInterface $resource
@@ -73,6 +88,7 @@ class TransformationManager
             payload: new TransformationPayload(
                 maxDepth: $this->maxDepth,
                 inclusions: $parser->getRequestedInclusions($this->inclusions),
+                exclusions: $parser->getRequestedInclusions($this->exclusions),
                 inclusionsParser: $parser,
                 serializer: $this->serializer,
             ),
