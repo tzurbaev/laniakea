@@ -1,6 +1,6 @@
 {
     "name": "laniakea/laniakea",
-    "description": "WIP",
+    "description": "API Resources Package for the Laravel Framework.",
     "keywords": [
         "tzurbaev",
         "laniakea"
@@ -16,13 +16,13 @@
     ],
     "require": {
         "php": "^8.2",
-        "illuminate/http": "^10.0|^11.0",
-        "illuminate/validation": "^10.0|^11.0",
-        "illuminate/support": "^10.0|^11.0",
-        "illuminate/contracts": "^10.0|^11.0",
-        "illuminate/container": "^10.0|^11.0",
-        "illuminate/config": "^10.0|^11.0",
-        "illuminate/database": "^10.0|^11.0"
+        "illuminate/http": "^10.0|^11.0|^12.0",
+        "illuminate/validation": "^10.0|^11.0|^12.0",
+        "illuminate/support": "^10.0|^11.0|^12.0",
+        "illuminate/contracts": "^10.0|^11.0|^12.0",
+        "illuminate/container": "^10.0|^11.0|^12.0",
+        "illuminate/config": "^10.0|^11.0|^12.0",
+        "illuminate/database": "^10.0|^11.0|^12.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.64",
