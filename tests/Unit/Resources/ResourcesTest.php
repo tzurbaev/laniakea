@@ -19,7 +19,7 @@ use Laniakea\Tests\Workbench\Resources\Requests\FakeResourceRequest;
 uses(RefreshDatabase::class, CreatesResourceManager::class);
 
 it('should return paginator', function () {
-    ArticleFactory::new()->createMany(10);
+    ArticleFactory::new()->count(10)->create();
     expect(Article::count())->toBe(10);
 
     $manager = $this->getResourceManager();
@@ -80,7 +80,7 @@ it('should return list', function () {
 });
 
 it('should apply custom callback to list', function () {
-    ArticleFactory::new()->createMany(10);
+    ArticleFactory::new()->count(10)->create();
     expect(Article::count())->toBe(10);
 
     $manager = $this->getResourceManager();

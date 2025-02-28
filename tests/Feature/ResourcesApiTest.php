@@ -10,7 +10,7 @@ use Laniakea\Tests\Workbench\Models\ArticleCategory;
 uses(RefreshDatabase::class);
 
 it('should use v1 transformer', function () {
-    ArticleFactory::new()->createMany(10);
+    ArticleFactory::new()->count(10)->create();
     expect(Article::count())->toBe(10);
 
     $this->getJson(route('testing.api.v1.articles.index'))
@@ -29,7 +29,7 @@ it('should use v1 transformer', function () {
 });
 
 it('should use v2 transformer', function () {
-    ArticleFactory::new()->createMany(10);
+    ArticleFactory::new()->count(10)->create();
     expect(Article::count())->toBe(10);
 
     $this->getJson(route('testing.api.v2.articles.index'))
@@ -48,7 +48,7 @@ it('should use v2 transformer', function () {
 });
 
 it('should paginate', function () {
-    ArticleFactory::new()->createMany(10);
+    ArticleFactory::new()->count(10)->create();
     expect(Article::count())->toBe(10);
 
     $this->getJson(route('testing.api.v1.articles.index', ['count' => 7]))
