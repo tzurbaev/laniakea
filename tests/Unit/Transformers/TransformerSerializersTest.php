@@ -8,18 +8,15 @@ use Laniakea\Tests\Workbench\Entities\BookAuthor;
 use Laniakea\Tests\Workbench\Transformers\AuthorTransformer;
 use Laniakea\Tests\Workbench\Transformers\BookTransformer;
 use Laniakea\Transformers\Interfaces\TransformationSerializerInterface;
-use Laniakea\Transformers\Resources\CollectionResource;
-use Laniakea\Transformers\Resources\ItemResource;
 use Laniakea\Transformers\Serializers\ArraySerializer;
 use Laniakea\Transformers\Serializers\DataArraySerializer;
 use Laniakea\Transformers\TransformationManager;
 
 it('should serialize item with ArraySerializer', function () {
     $book = new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien'));
-    $manager = new TransformationManager();
+    $manager = new TransformationManager($book, new BookTransformer());
     $manager->setSerializer(new ArraySerializer());
-    $transformed = $manager->getTransformation(new ItemResource($book, new BookTransformer()))
-        ->toArray();
+    $transformed = $manager->toArray();
 
     expect($transformed)->toBe([
         'title' => $book->title,
@@ -33,10 +30,9 @@ it('should serialize collection with ArraySerializer', function () {
         new Book('The Lord of the Rings', '978-0261102385', new BookAuthor('J.R.R. Tolkien')),
         new Book('The Silmarillion', '978-0261102736', new BookAuthor('J.R.R. Tolkien')),
     ];
-    $manager = new TransformationManager();
+    $manager = new TransformationManager($books, new BookTransformer());
     $manager->setSerializer(new ArraySerializer());
-    $transformed = $manager->getTransformation(new CollectionResource($books, new BookTransformer()))
-        ->toArray();
+    $transformed = $manager->toArray();
 
     expect($transformed)->toBe([
         [
@@ -56,10 +52,9 @@ it('should serialize collection with ArraySerializer', function () {
 
 it('should serialize item with DataArraySerializer', function () {
     $book = new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien'));
-    $manager = new TransformationManager();
+    $manager = new TransformationManager($book, new BookTransformer());
     $manager->setSerializer(new DataArraySerializer());
-    $transformed = $manager->getTransformation(new ItemResource($book, new BookTransformer()))
-        ->toArray();
+    $transformed = $manager->toArray();
 
     expect($transformed)->toBe([
         'data' => [
@@ -71,11 +66,9 @@ it('should serialize item with DataArraySerializer', function () {
 
 it('should not wrap nested item with data key in DataArraySerializer', function () {
     $book = new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien'));
-    $manager = new TransformationManager();
+    $manager = new TransformationManager($book, new BookTransformer());
     $manager->setSerializer(new DataArraySerializer());
-    $transformed = $manager->parseInclusions(['author'])
-        ->getTransformation(new ItemResource($book, new BookTransformer()))
-        ->toArray();
+    $transformed = $manager->parseInclusions(['author'])->toArray();
 
     expect($transformed)->toBe([
         'data' => [
@@ -94,10 +87,9 @@ it('should serialize collection with DataArraySerializer', function () {
         new Book('The Lord of the Rings', '978-0261102385', new BookAuthor('J.R.R. Tolkien')),
         new Book('The Silmarillion', '978-0261102736', new BookAuthor('J.R.R. Tolkien')),
     ];
-    $manager = new TransformationManager();
+    $manager = new TransformationManager($books, new BookTransformer());
     $manager->setSerializer(new DataArraySerializer());
-    $transformed = $manager->getTransformation(new CollectionResource($books, new BookTransformer()))
-        ->toArray();
+    $transformed = $manager->toArray();
 
     expect($transformed)->toBe([
         'data' => [
@@ -125,11 +117,9 @@ it('should not wrap nested collection with data key in DataArraySerializer', fun
     ];
 
     $author = new BookAuthor('J.R.R. Tolkien', $books);
-    $manager = new TransformationManager();
+    $manager = new TransformationManager($author, new AuthorTransformer());
     $manager->setSerializer(new DataArraySerializer());
-    $transformed = $manager->parseInclusions(['books'])
-        ->getTransformation(new ItemResource($author, new AuthorTransformer()))
-        ->toArray();
+    $transformed = $manager->parseInclusions(['books'])->toArray();
 
     expect($transformed)->toBe([
         'data' => [
@@ -160,10 +150,9 @@ it('should serialize pagination', function (TransformationSerializerInterface $s
     ];
 
     $paginator = new LengthAwarePaginator($books, total: 10, perPage: 3, currentPage: 1);
-    $manager = new TransformationManager();
+    $manager = new TransformationManager($paginator, new BookTransformer());
     $manager->setSerializer($serializer);
-    $transformed = $manager->getTransformation(new CollectionResource($paginator->collect(), new BookTransformer(), $paginator))
-        ->toArray();
+    $transformed = $manager->toArray();
 
     expect($transformed['meta'])->toBe([
         'pagination' => [

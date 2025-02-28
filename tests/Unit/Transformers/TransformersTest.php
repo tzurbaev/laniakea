@@ -2,20 +2,19 @@
 
 declare(strict_types=1);
 
+use Illuminate\Http\JsonResponse;
 use Laniakea\Tests\Workbench\Entities\Book;
 use Laniakea\Tests\Workbench\Entities\BookAuthor;
 use Laniakea\Tests\Workbench\Entities\NestedTransformationEntity;
 use Laniakea\Tests\Workbench\Transformers\BookTransformer;
 use Laniakea\Tests\Workbench\Transformers\BookTransformerWithDefaultAuthorInclusion;
 use Laniakea\Tests\Workbench\Transformers\Nested\FirstNestedTransformer;
-use Laniakea\Transformers\Resources\CollectionResource;
-use Laniakea\Transformers\Resources\ItemResource;
 use Laniakea\Transformers\TransformationManager;
 
 it('should perform basic item transformation', function () {
     $book = new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien'));
-    $manager = new TransformationManager();
-    $transformed = $manager->getTransformation(new ItemResource($book, new BookTransformer()))->toArray();
+    $manager = new TransformationManager($book, new BookTransformer());
+    $transformed = $manager->toArray();
 
     expect($transformed)->toBe([
         'title' => $book->title,
@@ -25,10 +24,8 @@ it('should perform basic item transformation', function () {
 
 it('should parse item inclusions', function () {
     $book = new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien'));
-    $manager = new TransformationManager();
-    $transformed = $manager->parseInclusions(['author'])
-        ->getTransformation(new ItemResource($book, new BookTransformer()))
-        ->toArray();
+    $manager = new TransformationManager($book, new BookTransformer());
+    $transformed = $manager->parseInclusions(['author'])->toArray();
 
     expect($transformed)->toBe([
         'title' => $book->title,
@@ -46,8 +43,8 @@ it('should perform basic collection transformations', function () {
         new Book('The Silmarillion', '978-0261102736', new BookAuthor('J.R.R. Tolkien')),
     ];
 
-    $manager = new TransformationManager();
-    $transformed = $manager->getTransformation(new CollectionResource($books, new BookTransformer()))->toArray();
+    $manager = new TransformationManager($books, new BookTransformer());
+    $transformed = $manager->toArray();
 
     expect($transformed)->toBe([
         [
@@ -72,10 +69,8 @@ it('should parse collection inclusions', function () {
         new Book('Harry Potter and the Philosopher\'s Stone', '978-0747532743', new BookAuthor('J.K. Rowling')),
     ];
 
-    $manager = new TransformationManager();
-    $transformed = $manager->parseInclusions(['author'])
-        ->getTransformation(new CollectionResource($books, new BookTransformer()))
-        ->toArray();
+    $manager = new TransformationManager($books, new BookTransformer());
+    $transformed = $manager->parseInclusions(['author'])->toArray();
 
     expect($transformed)->toBe([
         [
@@ -116,19 +111,18 @@ it('should control max depth', function () {
         'author.books.author.books.author.books.author.books.author.books.author.books',
     ];
 
-    $manager = new TransformationManager();
+    $manager = new TransformationManager($book, new BookTransformer());
+    $manager->setMaxDepth(4);
 
     $this->expectExceptionMessage('Max depth reached');
 
-    $manager->parseInclusions($inclusions)
-        ->getTransformation(new ItemResource($book, new BookTransformer()))
-        ->toArray();
+    $manager->parseInclusions($inclusions)->toArray();
 });
 
 it('should include default inclusions', function () {
     $book = new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien'));
-    $manager = new TransformationManager();
-    $transformed = $manager->getTransformation(new ItemResource($book, new BookTransformerWithDefaultAuthorInclusion()))->toArray();
+    $manager = new TransformationManager($book, new BookTransformerWithDefaultAuthorInclusion());
+    $transformed = $manager->toArray();
 
     expect($transformed)->toBe([
         'title' => $book->title,
@@ -141,10 +135,8 @@ it('should include default inclusions', function () {
 
 it('should omit default inclusions via exclusions', function () {
     $book = new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien'));
-    $manager = new TransformationManager();
-    $transformed = $manager->parseExclusions(['author'])
-        ->getTransformation(new ItemResource($book, new BookTransformerWithDefaultAuthorInclusion()))
-        ->toArray();
+    $manager = new TransformationManager($book, new BookTransformerWithDefaultAuthorInclusion());
+    $transformed = $manager->parseExclusions(['author'])->toArray();
 
     expect($transformed)->toBe([
         'title' => $book->title,
@@ -161,10 +153,8 @@ it('should omit only the last inclusion in chain via exclusions', function () {
         ),
     );
 
-    $manager = new TransformationManager();
-    $transformed = $manager->parseExclusions(['next.next'])
-        ->getTransformation(new ItemResource($entity, new FirstNestedTransformer()))
-        ->toArray();
+    $manager = new TransformationManager($entity, new FirstNestedTransformer());
+    $transformed = $manager->parseExclusions(['next.next'])->toArray();
 
     expect($transformed)->toBe([
         'level' => 1,
@@ -174,4 +164,22 @@ it('should omit only the last inclusion in chain via exclusions', function () {
             'name' => 'Second',
         ],
     ]);
+});
+
+it('should create JSON response', function () {
+    $book = new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien'));
+    $manager = new TransformationManager($book, new BookTransformer());
+    $response = $manager->parseInclusions(['author'])->respond(201, ['X-Header' => 'Value']);
+
+    expect($response)->toBeInstanceOf(JsonResponse::class)
+        ->and($response->status())->toBe(201)
+        ->and($response->headers->get('X-Header'))->toBe('Value')
+        ->and($response->getOriginalContent())
+        ->toBe([
+            'title' => $book->title,
+            'isbn' => $book->isbn,
+            'author' => [
+                'name' => $book->author->name,
+            ],
+        ]);
 });
