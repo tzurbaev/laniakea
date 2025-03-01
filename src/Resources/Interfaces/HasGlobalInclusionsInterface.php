@@ -9,7 +9,7 @@ interface HasGlobalInclusionsInterface
     /**
      * Get inclusions list that should be loaded in all queries.
      *
-     * @return array
+     * @return array<string>
      */
     public function getGlobalInclusions(): array;
 }

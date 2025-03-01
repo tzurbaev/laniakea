@@ -36,7 +36,7 @@ interface RepositoryQueryBuilderInterface
     /**
      * Replace query criteria.
      *
-     * @param array $criteria
+     * @param array<int, RepositoryCriterionInterface> $criteria
      *
      * @return $this
      */
@@ -45,7 +45,7 @@ interface RepositoryQueryBuilderInterface
     /**
      * Add one or more criterion to the query.
      *
-     * @param array $criteria
+     * @param array<int, RepositoryCriterionInterface> $criteria
      *
      * @return $this
      */
@@ -54,7 +54,7 @@ interface RepositoryQueryBuilderInterface
     /**
      * Get query criteria.
      *
-     * @return array|RepositoryCriterionInterface[]
+     * @return array<int, RepositoryCriterionInterface>
      */
     public function getCriteria(): array;
 
@@ -66,7 +66,7 @@ interface RepositoryQueryBuilderInterface
     /**
      * Eagerly load Eloquent model's relations.
      *
-     * @param array $relations
+     * @param array<string> $relations
      *
      * @return $this
      */

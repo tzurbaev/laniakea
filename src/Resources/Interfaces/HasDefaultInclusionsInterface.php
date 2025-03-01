@@ -9,7 +9,7 @@ interface HasDefaultInclusionsInterface
     /**
      * Get default inclusions list for the current resource.
      *
-     * @return array
+     * @return array<string>
      */
     public function getDefaultInclusions(): array;
 }

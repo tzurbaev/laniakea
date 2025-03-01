@@ -13,7 +13,7 @@ interface ResourceFilterInterface
      *
      * @param RepositoryQueryBuilderInterface $query
      * @param mixed                           $value
-     * @param array                           $values
+     * @param array<string, mixed>            $values
      */
     public function apply(RepositoryQueryBuilderInterface $query, mixed $value, array $values): void;
 }

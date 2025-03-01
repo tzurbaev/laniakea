@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Laniakea\Repositories\Interfaces\RepositoryInterface;
 
+/**
+ * @template T of Model
+ */
 interface ResourceManagerInterface
 {
     /**
@@ -21,7 +24,7 @@ interface ResourceManagerInterface
      * @param callable|null            $callback
      * @param array                    $context
      *
-     * @return LengthAwarePaginator
+     * @return LengthAwarePaginator<int, T>
      */
     public function getPaginator(
         ResourceRequestInterface $request,
@@ -40,7 +43,7 @@ interface ResourceManagerInterface
      * @param callable|null            $callback
      * @param array                    $context
      *
-     * @return Collection
+     * @return Collection<int, T>
      */
     public function getList(
         ResourceRequestInterface $request,
@@ -61,7 +64,7 @@ interface ResourceManagerInterface
      *
      * @throws ModelNotFoundException
      *
-     * @return Model
+     * @return T
      */
     public function getItem(
         mixed $id,

@@ -14,14 +14,14 @@ class RepositoryQueryBuilder implements RepositoryQueryBuilderInterface
     /**
      * List of repository query builder criteria.
      *
-     * @var array|RepositoryCriterionInterface[]
+     * @var array<int, RepositoryCriterionInterface>
      */
     private array $criteria = [];
 
     /**
      * List of repository query builder callbacks.
      *
-     * @var array|callable[]
+     * @var array<int, callable>
      */
     private array $callbacks = [];
 
@@ -102,7 +102,7 @@ class RepositoryQueryBuilder implements RepositoryQueryBuilderInterface
     /**
      * Replace query criteria.
      *
-     * @param array $criteria
+     * @param array<int, RepositoryCriterionInterface> $criteria
      *
      * @return $this
      */
@@ -116,7 +116,7 @@ class RepositoryQueryBuilder implements RepositoryQueryBuilderInterface
     /**
      * Add one or more criterion to the query.
      *
-     * @param array $criteria
+     * @param array<int, RepositoryCriterionInterface> $criteria
      *
      * @return $this
      */
@@ -133,7 +133,7 @@ class RepositoryQueryBuilder implements RepositoryQueryBuilderInterface
     /**
      * Get query criteria.
      *
-     * @return array|RepositoryCriterionInterface[]
+     * @return array<int, RepositoryCriterionInterface>
      */
     public function getCriteria(): array
     {
@@ -157,7 +157,7 @@ class RepositoryQueryBuilder implements RepositoryQueryBuilderInterface
     /**
      * Eagerly load Eloquent model's relations.
      *
-     * @param array $relations
+     * @param array<string> $relations
      *
      * @return $this
      */

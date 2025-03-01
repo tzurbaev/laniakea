@@ -23,7 +23,7 @@ interface ResourceRequestInterface
     /**
      * Get list of requested inclusions.
      *
-     * @return array
+     * @return array<string>
      */
     public function getInclusions(): array;
 
@@ -32,7 +32,7 @@ interface ResourceRequestInterface
      *
      * @param array $filters
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getFilters(array $filters): array;
 

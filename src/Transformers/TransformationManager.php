@@ -56,7 +56,7 @@ class TransformationManager implements \JsonSerializable
     /**
      * Set requested inclusions.
      *
-     * @param array $inclusions
+     * @param array<string> $inclusions
      *
      * @return static
      */
@@ -70,7 +70,7 @@ class TransformationManager implements \JsonSerializable
     /**
      * Set requested exclusions.
      *
-     * @param array $exclusions
+     * @param array<string> $exclusions
      *
      * @return static
      */
@@ -84,7 +84,7 @@ class TransformationManager implements \JsonSerializable
     /**
      * Create array representation of transformation.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -94,7 +94,7 @@ class TransformationManager implements \JsonSerializable
     /**
      * Specify data which should be serialized to JSON.
      *
-     * @return array
+     * @return array<string>
      */
     public function jsonSerialize(): array
     {

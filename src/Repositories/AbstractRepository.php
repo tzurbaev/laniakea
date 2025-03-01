@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Laniakea\Repositories\Interfaces\RepositoryInterface;
 
+/**
+ * @template T of Model
+ *
+ * @extends RepositoryInterface<T>
+ */
 abstract class AbstractRepository implements RepositoryInterface
 {
     /**
@@ -23,7 +28,7 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * Create fresh instance of the current repositiory's Eloquent model.
      *
-     * @return Model
+     * @return T
      */
     protected function getFreshModel(): Model
     {
@@ -67,7 +72,7 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @param array $attributes
      *
-     * @return Model
+     * @return T
      */
     public function create(array $attributes): Model
     {
@@ -81,12 +86,12 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * Update either provided model instance or existed model by ID.
      *
-     * @param Model|mixed $id
-     * @param array       $attributes
+     * @param T|mixed $id
+     * @param array   $attributes
      *
      * @throws ModelNotFoundException
      *
-     * @return Model
+     * @return T
      */
     public function update(mixed $id, array $attributes): Model
     {
@@ -98,7 +103,7 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * Delete either provided model instance or existed model by ID.
      *
-     * @param Model|mixed $id
+     * @param T|mixed $id
      *
      * @throws ModelNotFoundException
      */
@@ -114,7 +119,7 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @throws ModelNotFoundException
      *
-     * @return Model
+     * @return T
      */
     protected function resolveModel(mixed $id): Model
     {
@@ -131,7 +136,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param mixed         $id
      * @param callable|null $callback
      *
-     * @return Model|null
+     * @return T|null
      */
     public function find(mixed $id, ?callable $callback = null): ?Model
     {
@@ -146,7 +151,7 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @throws ModelNotFoundException
      *
-     * @return Model
+     * @return T
      */
     public function findOrFail(mixed $id, ?callable $callback = null): Model
     {
@@ -158,7 +163,7 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @param callable|null $callback
      *
-     * @return Model|null
+     * @return T|null
      */
     public function first(?callable $callback = null): ?Model
     {
@@ -172,7 +177,7 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @throws ModelNotFoundException
      *
-     * @return Model
+     * @return T
      */
     public function firstOrFail(?callable $callback = null): Model
     {
@@ -184,7 +189,7 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @param callable|null $callback
      *
-     * @return Collection
+     * @return Collection<int, T>
      */
     public function list(?callable $callback = null): Collection
     {
@@ -198,7 +203,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param int|null      $count
      * @param callable|null $callback
      *
-     * @return LengthAwarePaginator
+     * @return LengthAwarePaginator<int, T>
      */
     public function paginate(?int $page, ?int $count, ?callable $callback = null): LengthAwarePaginator
     {

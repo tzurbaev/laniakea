@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 
+/**
+ * @template T of Model
+ */
 interface RepositoryInterface
 {
     /**
@@ -16,26 +19,26 @@ interface RepositoryInterface
      *
      * @param array $attributes
      *
-     * @return Model
+     * @return T
      */
     public function create(array $attributes): Model;
 
     /**
      * Update either provided model instance or existed model by ID.
      *
-     * @param Model|mixed $id
-     * @param array       $attributes
+     * @param T|mixed $id
+     * @param array   $attributes
      *
      * @throws ModelNotFoundException
      *
-     * @return Model
+     * @return T
      */
     public function update(mixed $id, array $attributes): Model;
 
     /**
      * Delete either provided model instance or existed model by ID.
      *
-     * @param Model|mixed $id
+     * @param T|mixed $id
      *
      * @throws ModelNotFoundException
      */
@@ -47,7 +50,7 @@ interface RepositoryInterface
      * @param mixed         $id
      * @param callable|null $callback
      *
-     * @return Model|null
+     * @return T|null
      */
     public function find(mixed $id, ?callable $callback = null): ?Model;
 
@@ -59,7 +62,7 @@ interface RepositoryInterface
      *
      * @throws ModelNotFoundException
      *
-     * @return Model
+     * @return T
      */
     public function findOrFail(mixed $id, ?callable $callback = null): Model;
 
@@ -68,7 +71,7 @@ interface RepositoryInterface
      *
      * @param callable|null $callback
      *
-     * @return Model|null
+     * @return T|null
      */
     public function first(?callable $callback = null): ?Model;
 
@@ -79,7 +82,7 @@ interface RepositoryInterface
      *
      * @throws ModelNotFoundException
      *
-     * @return Model
+     * @return T
      */
     public function firstOrFail(?callable $callback = null): Model;
 
@@ -88,7 +91,7 @@ interface RepositoryInterface
      *
      * @param callable|null $callback
      *
-     * @return Collection
+     * @return Collection<int, T>
      */
     public function list(?callable $callback = null): Collection;
 
@@ -99,7 +102,7 @@ interface RepositoryInterface
      * @param int|null      $count
      * @param callable|null $callback
      *
-     * @return LengthAwarePaginator
+     * @return LengthAwarePaginator<int, T>
      */
     public function paginate(?int $page, ?int $count, ?callable $callback = null): LengthAwarePaginator;
 }

@@ -18,6 +18,11 @@ use Laniakea\Resources\Interfaces\ResourceManagerCommandInterface;
 use Laniakea\Resources\Interfaces\ResourceManagerInterface;
 use Laniakea\Resources\Interfaces\ResourceRequestInterface;
 
+/**
+ * @template T of Model
+ *
+ * @extends ResourceManagerInterface<T>
+ */
 readonly class ResourceManager implements ResourceManagerInterface
 {
     public function __construct(private ResourceManagerCommands $commands)
@@ -34,7 +39,7 @@ readonly class ResourceManager implements ResourceManagerInterface
      * @param callable|null            $callback
      * @param array                    $context
      *
-     * @return LengthAwarePaginator
+     * @return LengthAwarePaginator<int, T>
      */
     public function getPaginator(
         ResourceRequestInterface $request,
@@ -63,7 +68,7 @@ readonly class ResourceManager implements ResourceManagerInterface
      * @param callable|null            $callback
      * @param array                    $context
      *
-     * @return Collection
+     * @return Collection<int, T>
      */
     public function getList(
         ResourceRequestInterface $request,
@@ -92,7 +97,7 @@ readonly class ResourceManager implements ResourceManagerInterface
      *
      * @throws ModelNotFoundException
      *
-     * @return Model
+     * @return T
      */
     public function getItem(
         mixed $id,
