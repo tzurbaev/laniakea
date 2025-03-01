@@ -74,6 +74,22 @@ return [
     ],
 
     /**
+     * Transformers are classes that turns your Eloquent models into JSON responses.
+     */
+    'transformers' => [
+        /**
+         * While you can specify a serializer for each transformation, you can also set a default one.
+         * This serializer will be used when no serializer is specified.
+         *
+         * If you want to disable default serializer for a specific transformation,
+         * use TransformationManager::withoutDefaultSerializer() method.
+         *
+         * Serializer must implement the Laniakea\Transformers\Interfaces\TransformationSerializerInterface interface.
+         */
+        'default_serializer' => null,
+    ],
+
+    /**
      * Those are default bindings for the Laniakea managers. If you're not happy with default ones,
      * you can make your own implementations and bind them here.
      *

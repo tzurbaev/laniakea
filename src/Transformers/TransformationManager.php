@@ -19,6 +19,7 @@ class TransformationManager implements \JsonSerializable
     protected array $inclusions = [];
     protected array $exclusions = [];
     protected ?TransformationSerializerInterface $serializer = null;
+    protected bool $withDefaultSerializer = true;
 
     public function __construct(protected readonly mixed $data, protected readonly mixed $transformer)
     {
@@ -49,6 +50,18 @@ class TransformationManager implements \JsonSerializable
     public function setSerializer(TransformationSerializerInterface $serializer): static
     {
         $this->serializer = $serializer;
+
+        return $this;
+    }
+
+    /**
+     * Disable default serializer for this transformation.
+     *
+     * @return $this
+     */
+    public function withoutDefaultSerializer(): static
+    {
+        $this->withDefaultSerializer = false;
 
         return $this;
     }
@@ -116,6 +129,28 @@ class TransformationManager implements \JsonSerializable
     }
 
     /**
+     * Get initial resource transformation.
+     *
+     * @return TransformationInterface
+     */
+    public function getTransformation(): TransformationInterface
+    {
+        $parser = $this->getInclusionsParser();
+
+        return new Transformation(
+            resource: $this->createResource(),
+            payload: new TransformationPayload(
+                maxDepth: $this->maxDepth,
+                inclusions: $parser->getRequestedInclusions($this->inclusions),
+                exclusions: $parser->getRequestedInclusions($this->exclusions),
+                inclusionsParser: $parser,
+                serializer: $this->getSerializer(),
+            ),
+            depth: 0,
+        );
+    }
+
+    /**
      * Create resource for transformation.
      *
      * @return TransformerResourceInterface
@@ -134,25 +169,25 @@ class TransformationManager implements \JsonSerializable
     }
 
     /**
-     * Get initial resource transformation.
+     * Get serializer for current transformation.
      *
-     * @return TransformationInterface
+     * @return TransformationSerializerInterface|null
      */
-    public function getTransformation(): TransformationInterface
+    protected function getSerializer(): ?TransformationSerializerInterface
     {
-        $parser = $this->getInclusionsParser();
+        if (!is_null($this->serializer)) {
+            return $this->serializer;
+        } elseif (!$this->withDefaultSerializer) {
+            return null;
+        }
 
-        return new Transformation(
-            resource: $this->createResource(),
-            payload: new TransformationPayload(
-                maxDepth: $this->maxDepth,
-                inclusions: $parser->getRequestedInclusions($this->inclusions),
-                exclusions: $parser->getRequestedInclusions($this->exclusions),
-                inclusionsParser: $parser,
-                serializer: $this->serializer,
-            ),
-            depth: 0,
-        );
+        $defaultSerializer = config('laniakea.transformers.default_serializer');
+
+        if (empty($defaultSerializer) || !class_exists($defaultSerializer)) {
+            return null;
+        }
+
+        return new $defaultSerializer();
     }
 
     /**

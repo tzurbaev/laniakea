@@ -7,6 +7,7 @@ use Laniakea\Tests\Workbench\Entities\Book;
 use Laniakea\Tests\Workbench\Entities\BookAuthor;
 use Laniakea\Tests\Workbench\Transformers\AuthorTransformer;
 use Laniakea\Tests\Workbench\Transformers\BookTransformer;
+use Laniakea\Tests\Workbench\Transformers\Serializers\CustomDefaultTransformationSerialzier;
 use Laniakea\Transformers\Interfaces\TransformationSerializerInterface;
 use Laniakea\Transformers\Serializers\ArraySerializer;
 use Laniakea\Transformers\Serializers\DataArraySerializer;
@@ -179,3 +180,124 @@ it('should serialize pagination', function (TransformationSerializerInterface $s
     ['serializer' => new ArraySerializer()],
     ['serializer' => new DataArraySerializer()],
 ]);
+
+it('should use default serializer for item transformations', function () {
+    config()->set('laniakea.transformers.default_serializer', CustomDefaultTransformationSerialzier::class);
+    expect(config('laniakea.transformers.default_serializer'))->toBe(CustomDefaultTransformationSerialzier::class);
+
+    $book = new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien'));
+    $manager = new TransformationManager($book, new BookTransformer());
+    $transformed = $manager->toArray();
+
+    expect($transformed)->toBe([
+        'type' => 'item',
+        'data' => [
+            'title' => $book->title,
+            'isbn' => $book->isbn,
+        ],
+    ]);
+});
+
+it('should use default serializer for collection transformations', function () {
+    $books = [
+        new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien')),
+        new Book('The Lord of the Rings', '978-0261102385', new BookAuthor('J.R.R. Tolkien')),
+        new Book('The Silmarillion', '978-0261102736', new BookAuthor('J.R.R. Tolkien')),
+    ];
+
+    config()->set('laniakea.transformers.default_serializer', CustomDefaultTransformationSerialzier::class);
+    expect(config('laniakea.transformers.default_serializer'))->toBe(CustomDefaultTransformationSerialzier::class);
+
+    $manager = new TransformationManager($books, new BookTransformer());
+    $transformed = $manager->toArray();
+
+    expect($transformed)->toBe([
+        'type' => 'collection',
+        'data' => [
+            [
+                'type' => 'nested_item',
+                'data' => [
+                    'title' => $books[0]->title,
+                    'isbn' => $books[0]->isbn,
+                ],
+            ],
+            [
+                'type' => 'nested_item',
+                'data' => [
+                    'title' => $books[1]->title,
+                    'isbn' => $books[1]->isbn,
+                ],
+            ],
+            [
+                'type' => 'nested_item',
+                'data' => [
+                    'title' => $books[2]->title,
+                    'isbn' => $books[2]->isbn,
+                ],
+            ],
+        ],
+    ]);
+});
+
+it('should use default serializer for paginatior transformations', function () {
+    $books = [
+        new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien')),
+        new Book('The Lord of the Rings', '978-0261102385', new BookAuthor('J.R.R. Tolkien')),
+        new Book('The Silmarillion', '978-0261102736', new BookAuthor('J.R.R. Tolkien')),
+    ];
+
+    config()->set('laniakea.transformers.default_serializer', CustomDefaultTransformationSerialzier::class);
+    expect(config('laniakea.transformers.default_serializer'))->toBe(CustomDefaultTransformationSerialzier::class);
+
+    $paginator = new LengthAwarePaginator($books, total: 10, perPage: 3, currentPage: 1);
+    $manager = new TransformationManager($paginator, new BookTransformer());
+    $transformed = $manager->toArray();
+
+    expect($transformed)->toBe([
+        'type' => 'collection',
+        'data' => [
+            [
+                'type' => 'nested_item',
+                'data' => [
+                    'title' => $books[0]->title,
+                    'isbn' => $books[0]->isbn,
+                ],
+            ],
+            [
+                'type' => 'nested_item',
+                'data' => [
+                    'title' => $books[1]->title,
+                    'isbn' => $books[1]->isbn,
+                ],
+            ],
+            [
+                'type' => 'nested_item',
+                'data' => [
+                    'title' => $books[2]->title,
+                    'isbn' => $books[2]->isbn,
+                ],
+            ],
+        ],
+        'meta' => [
+            'type' => 'pagination',
+            'data' => [
+                'count' => 10,
+                'pages' => 4,
+            ],
+        ],
+    ]);
+});
+
+it('should use skip default serializer', function () {
+    config()->set('laniakea.transformers.default_serializer', CustomDefaultTransformationSerialzier::class);
+    expect(config('laniakea.transformers.default_serializer'))->toBe(CustomDefaultTransformationSerialzier::class);
+
+    $book = new Book('The Hobbit', '978-0261102217', new BookAuthor('J.R.R. Tolkien'));
+    $manager = new TransformationManager($book, new BookTransformer());
+    $transformed = $manager->withoutDefaultSerializer()->toArray();
+
+    expect($transformed)->toBe([
+        'title' => $book->title,
+        'isbn' => $book->isbn,
+    ]);
+});
